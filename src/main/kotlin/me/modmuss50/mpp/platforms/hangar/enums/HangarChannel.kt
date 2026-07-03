@@ -1,7 +1,9 @@
 package me.modmuss50.mpp.platforms.hangar.enums
 
+import org.gradle.api.Incubating
 import java.lang.IllegalArgumentException
 
+@Incubating
 enum class HangarChannel {
     RELEASE,
     SNAPSHOT;
