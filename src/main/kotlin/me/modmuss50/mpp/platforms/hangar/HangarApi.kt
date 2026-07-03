@@ -1,11 +1,13 @@
 package me.modmuss50.mpp.platforms.hangar
 
-import me.modmuss50.mpp.networking.RequestContext
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.modmuss50.mpp.networking.HttpApi.get
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
-import java.io.File
+import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.platforms.hangar.enums.HangarChannel
+import me.modmuss50.mpp.platforms.hangar.platform.HangarPlatform
 import java.net.URLEncoder
 
 /*
@@ -26,17 +28,35 @@ class HangarApi(
     }
 
     @Serializable
-    data class Version(
+    data class VersionResponse(
         val name: String,
         val channel: String,
-        val description: String? = null,
+        val description: String? = null
     )
 
     @Serializable
-    data class Project(
+    data class ProjectResponse(
         val name: String,
-        val namespace: String,
+        val namespace: String
     )
+
+    @Serializable
+    enum class ChannelType {
+        @SerialName("Release")
+        RELEASE,
+
+        @SerialName("Snapshot")
+        SNAPSHOT,
+        ;
+
+        companion object {
+            fun valueOf(type: HangarChannel): ChannelType =
+                when (type) {
+                    HangarChannel.RELEASE -> RELEASE
+                    HangarChannel.SNAPSHOT -> SNAPSHOT
+                }
+        }
+    }
 
     private val headers: Map<String, String>
         get() = mapOf("Authorization" to "Bearer $apiKey")
@@ -44,21 +64,24 @@ class HangarApi(
     fun publishVersion(
         projectSlug: String,
         version: String,
-        channel: String,
+        channel: ChannelType,
         changelog: String,
-        platform: String,
-        platformVersions: List<String>,
-        file: File,
-    ): Version {
-        val encodedSlug = URLEncoder.encode(projectSlug, Charsets.UTF_8)
-        val url = "$apiEndpoint/projects/$encodedSlug/versions"
+        platforms: List<HangarPlatform>
+    ): VersionResponse {
+        val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}/versions"
+
         val builder = MultipartBodyBuilder()
             .addFormDataPart("version", version)
-            .addFormDataPart("channel", channel)
+            .addFormDataPart("channel", channel.name)
             .addFormDataPart("description", changelog)
-            .addFormDataPart("platform", platform)
-            .addFormDataPart("platformVersions", platformVersions.joinToString(","))
-            .addFormDataPart("file", file.name, file)
+
+        platforms.forEachIndexed { index, platform ->
+            builder
+                .addFormDataPart("platforms[$index].platform", platform.platform.name)
+                .addFormDataPart("platforms[$index].platformVersions", platform.versions.joinToString(","))
+                .addFormDataPart("platforms[$index].file", platform.file.name, platform.file)
+        }
+
         val bodyPublisher = builder.build()
         val headersWithContentType = headers + ("Content-Type" to builder.getContentType())
 
@@ -71,13 +94,16 @@ class HangarApi(
 
     fun getProject(
         projectSlug: String
-    ): Project {
-        val encodedSlug = URLEncoder.encode(projectSlug, Charsets.UTF_8)
-        val url = "$apiEndpoint/projects/$encodedSlug"
+    ): ProjectResponse {
+        val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}"
 
         return httpContext.get(
             url,
             headers
         )
     }
+
+    private fun encodeSlug(slug: String): String =
+        slug.split("/")
+            .joinToString("/") { URLEncoder.encode(it, Charsets.UTF_8) }
 }
