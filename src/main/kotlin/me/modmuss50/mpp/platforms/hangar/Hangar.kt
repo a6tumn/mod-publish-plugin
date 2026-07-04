@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 abstract class Hangar @Inject constructor(
     name: String
-) : Platform(name), HangerOptions {
+) : Platform(name), HangarOptions {
     override fun publish(context: PublishContext) {
         context.submit(UploadWorkAction::class) {
             it.from(this)
@@ -33,7 +33,7 @@ abstract class Hangar @Inject constructor(
 
     interface UploadParams :
         PublishWorkParameters,
-        HangerOptions
+        HangarOptions
 
     abstract class UploadWorkAction : PublishWorkAction<UploadParams> {
         override fun publish(): PublishResult {

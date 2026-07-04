@@ -16,7 +16,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 
 @Incubating
-interface HangerOptions : PlatformOptions, PlatformOptionsInternal<HangerOptions> {
+interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions> {
     @get:Input
     val project: Property<String>
 
@@ -34,19 +34,19 @@ interface HangerOptions : PlatformOptions, PlatformOptionsInternal<HangerOptions
         channel.convention(HangarApi.ChannelType.valueOf(HangarChannel.RELEASE))
     }
 
-    fun from(other: HangerOptions) {
+    fun from(other: HangarOptions) {
         super.from(other)
         project.convention(other.project)
         channel.convention(other.channel)
         apiEndpoint.convention(other.apiEndpoint)
     }
 
-    fun from(other: Provider<HangerOptions>) {
+    fun from(other: Provider<HangarOptions>) {
         from(other.get())
     }
 
     fun from(
-        other: Provider<HangerOptions>,
+        other: Provider<HangarOptions>,
         publishOptions: Provider<PublishOptions>,
     ) {
         from(other)
@@ -58,7 +58,7 @@ interface HangerOptions : PlatformOptions, PlatformOptionsInternal<HangerOptions
      */
     fun parent(task: TaskProvider<Task>) {
         val publishTask = task.map { it as PublishModTask }
-        val options = publishTask.map { it.platform as HangerOptions }
+        val options = publishTask.map { it.platform as HangarOptions }
         version.set(options.flatMap { it.version })
         version.finalizeValue()
         changelog.set(options.flatMap { it.changelog })
