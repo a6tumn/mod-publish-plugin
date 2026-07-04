@@ -6,7 +6,8 @@ import java.lang.IllegalArgumentException
 @Incubating
 enum class HangarChannel {
     RELEASE,
-    SNAPSHOT;
+    SNAPSHOT,
+    ALPHA;
 
     companion object {
         @JvmStatic
@@ -15,7 +16,7 @@ enum class HangarChannel {
             try {
                 return valueOf(upper)
             } catch (_ : IllegalArgumentException) {
-                throw IllegalArgumentException("Invalid channel type: $upper. Must be one of: RELEASE, SNAPSHOT")
+                throw IllegalArgumentException("Invalid channel type: $upper. Must be one of: RELEASE, SNAPSHOT, ALPHA")
             }
         }
     }

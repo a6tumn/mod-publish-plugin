@@ -47,6 +47,9 @@ class HangarApi(
 
         @SerialName("Snapshot")
         SNAPSHOT,
+
+        @SerialName("Alpha")
+        ALPHA,
         ;
 
         companion object {
@@ -54,6 +57,7 @@ class HangarApi(
                 when (type) {
                     HangarChannel.RELEASE -> RELEASE
                     HangarChannel.SNAPSHOT -> SNAPSHOT
+                    HangarChannel.ALPHA -> ALPHA
                 }
         }
     }
