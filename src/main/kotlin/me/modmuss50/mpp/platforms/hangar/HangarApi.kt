@@ -2,11 +2,11 @@ package me.modmuss50.mpp.platforms.hangar
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.networking.HttpApi.get
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
-import me.modmuss50.mpp.platforms.hangar.enums.HangarChannel
 import me.modmuss50.mpp.platforms.hangar.platform.HangarPlatform
 import java.net.URLEncoder
 
@@ -53,11 +53,11 @@ class HangarApi(
         ;
 
         companion object {
-            fun valueOf(type: HangarChannel): ChannelType =
+            fun valueOf(type: ReleaseType): ChannelType =
                 when (type) {
-                    HangarChannel.RELEASE -> RELEASE
-                    HangarChannel.SNAPSHOT -> SNAPSHOT
-                    HangarChannel.ALPHA -> ALPHA
+                    ReleaseType.STABLE -> RELEASE
+                    ReleaseType.BETA -> SNAPSHOT
+                    ReleaseType.ALPHA -> ALPHA
                 }
         }
     }

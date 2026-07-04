@@ -6,7 +6,7 @@ import me.modmuss50.mpp.PublishContext
 import me.modmuss50.mpp.PublishResult
 import me.modmuss50.mpp.PublishWorkAction
 import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.platforms.hangar.enums.HangarChannel
+import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.platforms.hangar.platform.HangarPlatform
 import org.gradle.api.logging.Logger
 import javax.inject.Inject
@@ -25,7 +25,7 @@ abstract class Hangar @Inject constructor(
         HangarPublishResult(
             projectSlug = "dry-run/example-project-${Random.nextInt(0, 1000000)}",
             version = "1.0.0-Stable",
-            channel = HangarChannel.RELEASE.name,
+            channel = HangarApi.ChannelType.valueOf(ReleaseType.STABLE).name,
             title = announcementTitle.getOrElse("Download from Hangar")
         )
 

@@ -4,7 +4,7 @@ import me.modmuss50.mpp.PlatformOptions
 import me.modmuss50.mpp.PlatformOptionsInternal
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.PublishOptions
-import me.modmuss50.mpp.platforms.hangar.enums.HangarChannel
+import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.platforms.hangar.platform.HangarGradlePlatform
 import org.gradle.api.Incubating
 import org.gradle.api.Task
@@ -31,7 +31,7 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     val apiEndpoint: Property<String>
 
     override fun setInternalDefaults() {
-        channel.convention(HangarApi.ChannelType.valueOf(HangarChannel.RELEASE))
+        channel.convention(HangarApi.ChannelType.valueOf(ReleaseType.STABLE))
     }
 
     fun from(other: HangarOptions) {
