@@ -7,7 +7,8 @@ import java.lang.IllegalArgumentException
 enum class HangarPlatformType {
     PAPER,
     VELOCITY,
-    WATERFALL;
+    WATERFALL,
+    ;
 
     companion object {
         @JvmStatic
@@ -15,7 +16,7 @@ enum class HangarPlatformType {
             val upper = value.uppercase()
             try {
                 return valueOf(upper)
-            } catch (_ : IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 throw IllegalArgumentException("Invalid platform type: $upper. Must be one of: PAPER, VELOCITY, WATEFALL")
             }
         }

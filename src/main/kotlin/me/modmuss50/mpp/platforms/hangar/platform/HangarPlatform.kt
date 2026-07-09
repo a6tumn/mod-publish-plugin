@@ -6,5 +6,5 @@ import java.io.File
 data class HangarPlatform(
     val platform: HangarPlatformType,
     val versions: List<String>,
-    val file: File
+    val file: File,
 )

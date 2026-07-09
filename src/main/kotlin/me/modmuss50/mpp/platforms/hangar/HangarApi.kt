@@ -16,14 +16,14 @@ import java.net.URLEncoder
 */
 class HangarApi(
     private val apiKey: String,
-    private val apiEndpoint: String = "https://hangar.papermc.io/api/v1"
+    private val apiEndpoint: String = "https://hangar.papermc.io/api/v1",
 ) {
     companion object {
         val httpContext = RequestContext(
             json = RequestContext.Default.json,
             userAgent = RequestContext.Default.userAgent,
             client = RequestContext.Default.client,
-            exceptionFactory = RequestContext.Default.exceptionFactory
+            exceptionFactory = RequestContext.Default.exceptionFactory,
         )
     }
 
@@ -31,13 +31,13 @@ class HangarApi(
     data class VersionResponse(
         val name: String,
         val channel: String,
-        val description: String? = null
+        val description: String? = null,
     )
 
     @Serializable
     data class ProjectResponse(
         val name: String,
-        val namespace: String
+        val namespace: String,
     )
 
     @Serializable
@@ -70,7 +70,7 @@ class HangarApi(
         version: String,
         channel: ChannelType,
         changelog: String,
-        platforms: List<HangarPlatform>
+        platforms: List<HangarPlatform>,
     ): VersionResponse {
         val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}/versions"
 
@@ -92,18 +92,18 @@ class HangarApi(
         return httpContext.post(
             url,
             bodyPublisher,
-            headersWithContentType
+            headersWithContentType,
         )
     }
 
     fun getProject(
-        projectSlug: String
+        projectSlug: String,
     ): ProjectResponse {
         val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}"
 
         return httpContext.get(
             url,
-            headers
+            headers,
         )
     }
 

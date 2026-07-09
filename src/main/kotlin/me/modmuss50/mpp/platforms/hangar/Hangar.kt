@@ -13,7 +13,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 abstract class Hangar @Inject constructor(
-    name: String
+    name: String,
 ) : Platform(name), HangarOptions {
     override fun publish(context: PublishContext) {
         context.submit(UploadWorkAction::class) {
@@ -26,7 +26,7 @@ abstract class Hangar @Inject constructor(
             projectSlug = "dry-run/example-project-${Random.nextInt(0, 1000000)}",
             version = "1.0.0-Stable",
             channel = HangarApi.ChannelType.valueOf(ReleaseType.STABLE).name,
-            title = announcementTitle.getOrElse("Download from Hangar")
+            title = announcementTitle.getOrElse("Download from Hangar"),
         )
 
     override fun printDryRunInfo(logger: Logger) {}
@@ -42,13 +42,13 @@ abstract class Hangar @Inject constructor(
                     HangarPlatform(
                         platform = it.platform,
                         versions = it.versions,
-                        file = it.file.asFile.get()
+                        file = it.file.asFile.get(),
                     )
                 }
 
                 val api = HangarApi(
                     apiKey = accessToken.get(),
-                    apiEndpoint = apiEndpoint.orNull ?: "https://hangar.papermc.io/api/v1"
+                    apiEndpoint = apiEndpoint.orNull ?: "https://hangar.papermc.io/api/v1",
                 )
 
                 val response = api.publishVersion(
@@ -56,14 +56,14 @@ abstract class Hangar @Inject constructor(
                     version = version.get(),
                     channel = channel.get(),
                     changelog = changelog.get(),
-                    platforms = resolvedPlatforms
+                    platforms = resolvedPlatforms,
                 )
 
                 return HangarPublishResult(
                     projectSlug = project.get(),
                     version = response.name,
                     channel = response.channel,
-                    title = announcementTitle.getOrElse("Download from Hangar")
+                    title = announcementTitle.getOrElse("Download from Hangar"),
                 )
             }
         }

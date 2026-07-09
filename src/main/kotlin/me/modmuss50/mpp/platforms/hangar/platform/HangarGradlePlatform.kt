@@ -6,5 +6,5 @@ import org.gradle.api.file.RegularFileProperty
 data class HangarGradlePlatform(
     val platform: HangarPlatformType,
     val versions: List<String>,
-    val file: RegularFileProperty
+    val file: RegularFileProperty,
 )
