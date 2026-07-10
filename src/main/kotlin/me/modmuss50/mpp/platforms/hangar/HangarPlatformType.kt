@@ -1,4 +1,4 @@
-package me.modmuss50.mpp.platforms.hangar.enums
+package me.modmuss50.mpp.platforms.hangar
 
 import org.gradle.api.Incubating
 import java.lang.IllegalArgumentException

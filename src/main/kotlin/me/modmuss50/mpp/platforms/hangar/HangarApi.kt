@@ -3,20 +3,18 @@ package me.modmuss50.mpp.platforms.hangar
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.modmuss50.mpp.ReleaseType
-import me.modmuss50.mpp.networking.HttpApi.get
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
-import me.modmuss50.mpp.platforms.hangar.platform.HangarPlatform
+import java.io.File
 import java.net.URLEncoder
 
 /*
-* https://hangar.papermc.io/api-docs#overview
-* https://docs.rs/hangar-api/latest/hangar_api/index.html
+* https://github.com/HangarMC/hangar-publish-plugin/blob/master/plugin/src/main/java/io/papermc/hangarpublishplugin/internal/HangarVersion.java
 */
 class HangarApi(
     private val apiKey: String,
-    private val apiEndpoint: String = "https://hangar.papermc.io/api/v1",
+    private val apiEndpoint: String = "https://hangar.papermc.io/api/v1/",
 ) {
     companion object {
         val httpContext = RequestContext(
@@ -28,16 +26,26 @@ class HangarApi(
     }
 
     @Serializable
-    data class VersionResponse(
-        val name: String,
-        val channel: String,
+    data class VersionUpload(
+        val version: String,
+        val pluginDependencies: Map<String, List<PluginDependency>> = emptyMap(),
+        val platformDependencies: Map<String, List<String>>,
         val description: String? = null,
+        val files: List<FileData>,
+        val channel: ChannelType,
     )
 
     @Serializable
-    data class ProjectResponse(
+    data class PluginDependency(
         val name: String,
-        val namespace: String,
+        val required: Boolean = true,
+        val externalUrl: String? = null,
+    )
+
+    @Serializable
+    data class FileData(
+        val platforms: List<String>,
+        val externalUrl: String? = null,
     )
 
     @Serializable
@@ -62,6 +70,11 @@ class HangarApi(
         }
     }
 
+    @Serializable
+    data class VersionResponse(
+        val url: String,
+    )
+
     private val headers: Map<String, String>
         get() = mapOf("Authorization" to "Bearer $apiKey")
 
@@ -70,40 +83,38 @@ class HangarApi(
         version: String,
         channel: ChannelType,
         changelog: String,
-        platforms: List<HangarPlatform>,
+        platform: HangarPlatformType,
+        platformVersions: List<String>,
+        file: File,
+        pluginDependencies: List<PluginDependency> = emptyList(),
     ): VersionResponse {
-        val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}/versions"
+        val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}/upload"
+
+        val upload = VersionUpload(
+            version = version,
+            channel = channel,
+            description = changelog,
+            platformDependencies = mapOf(
+                platform.name to platformVersions,
+            ),
+            pluginDependencies = mapOf(
+                platform.name to pluginDependencies,
+            ),
+            files = listOf(
+                FileData(
+                    platforms = listOf(platform.name),
+                ),
+            ),
+        )
 
         val builder = MultipartBodyBuilder()
-            .addFormDataPart("version", version)
-            .addFormDataPart("channel", channel.name)
-            .addFormDataPart("description", changelog)
-
-        platforms.forEachIndexed { index, platform ->
-            builder
-                .addFormDataPart("platforms[$index].platform", platform.platform.name)
-                .addFormDataPart("platforms[$index].platformVersions", platform.versions.joinToString(","))
-                .addFormDataPart("platforms[$index].file", platform.file.name, platform.file)
-        }
-
-        val bodyPublisher = builder.build()
-        val headersWithContentType = headers + ("Content-Type" to builder.getContentType())
+            .addFormDataPart("versionUpload", httpContext.json.encodeToString(upload))
+            .addFormDataPart("files", file.name, file)
 
         return httpContext.post(
-            url,
-            bodyPublisher,
-            headersWithContentType,
-        )
-    }
-
-    fun getProject(
-        projectSlug: String,
-    ): ProjectResponse {
-        val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}"
-
-        return httpContext.get(
-            url,
-            headers,
+            url = url,
+            body = builder.build(),
+            headers = headers + ("Content-Type" to builder.getContentType()),
         )
     }
 

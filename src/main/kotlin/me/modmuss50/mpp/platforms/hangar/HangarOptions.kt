@@ -4,8 +4,6 @@ import me.modmuss50.mpp.PlatformOptions
 import me.modmuss50.mpp.PlatformOptionsInternal
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.PublishOptions
-import me.modmuss50.mpp.ReleaseType
-import me.modmuss50.mpp.platforms.hangar.platform.HangarGradlePlatform
 import org.gradle.api.Incubating
 import org.gradle.api.Task
 import org.gradle.api.provider.ListProperty
@@ -15,30 +13,44 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 
+/*
+* https://github.com/HangarMC/hangar-publish-plugin/blob/master/plugin/src/main/kotlin/io/papermc/hangarpublishplugin/model/HangarPublication.kt
+*/
+
 @Incubating
 interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions> {
-    @get:Input
-    val project: Property<String>
 
-    @get:Input
-    val channel: Property<HangarApi.ChannelType>
-
-    @get:Input
-    val platforms: ListProperty<HangarGradlePlatform>
-
+    /**
+     * The API URL, defaults to https://hangar.papermc.io/api/v1/.
+     */
     @get:Input
     @get:Optional
     val apiEndpoint: Property<String>
 
-    override fun setInternalDefaults() {
-        channel.convention(HangarApi.ChannelType.valueOf(ReleaseType.STABLE))
-    }
+    /**
+     * The id of the Hangar project this publication is for.
+     */
+    @get:Input
+    val id: Property<String>
+
+    /**
+     * The type of plugin for this publication, i.e. "Paper", "Velocity", or "Waterfall".
+     */
+    @get:Input
+    val projectType: Property<HangarPlatformType>
+
+    /**
+     * List of supported platform versions, i.e. `listOf("26.1", "26.1.1")`.
+     */
+    @get:Input
+    val platformVersions: ListProperty<String>
 
     fun from(other: HangarOptions) {
         super.from(other)
-        project.convention(other.project)
-        channel.convention(other.channel)
-        apiEndpoint.convention(other.apiEndpoint)
+        apiEndpoint.set(other.apiEndpoint)
+        id.set(other.id)
+        projectType.convention(other.projectType)
+        platformVersions.convention(other.platformVersions)
     }
 
     fun from(other: Provider<HangarOptions>) {
@@ -59,6 +71,7 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     fun parent(task: TaskProvider<Task>) {
         val publishTask = task.map { it as PublishModTask }
         val options = publishTask.map { it.platform as HangarOptions }
+
         version.set(options.flatMap { it.version })
         version.finalizeValue()
         changelog.set(options.flatMap { it.changelog })
@@ -67,11 +80,12 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
         type.finalizeValue()
         displayName.set(options.flatMap { it.displayName })
         displayName.finalizeValue()
-        project.set(options.flatMap { it.project })
-        project.finalizeValue()
-        channel.set(options.flatMap { it.channel })
-        channel.finalizeValue()
-        platforms.set(options.flatMap { it.platforms })
-        platforms.finalizeValue()
+
+        id.set(options.flatMap { it.id })
+        id.finalizeValue()
+        projectType.set(options.flatMap { it.projectType })
+        projectType.finalizeValue()
+        platformVersions.set(options.flatMap { it.platformVersions })
+        platformVersions.finalizeValue()
     }
 }

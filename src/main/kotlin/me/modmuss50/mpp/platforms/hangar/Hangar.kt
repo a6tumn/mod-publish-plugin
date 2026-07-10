@@ -7,7 +7,6 @@ import me.modmuss50.mpp.PublishResult
 import me.modmuss50.mpp.PublishWorkAction
 import me.modmuss50.mpp.PublishWorkParameters
 import me.modmuss50.mpp.ReleaseType
-import me.modmuss50.mpp.platforms.hangar.platform.HangarPlatform
 import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
@@ -21,13 +20,18 @@ abstract class Hangar @Inject constructor(
         }
     }
 
-    override fun dryRunPublishResult(): PublishResult =
-        HangarPublishResult(
-            projectSlug = "dry-run/example-project-${Random.nextInt(0, 1000000)}",
-            version = "1.0.0-Stable",
+    override fun dryRunPublishResult(): PublishResult {
+        val projectSlug = "dry-run/example-project-${Random.nextInt(0, 1000000)}"
+        val version = "1.0.0"
+
+        return HangarPublishResult(
+            projectSlug = projectSlug,
+            version = version,
             channel = HangarApi.ChannelType.valueOf(ReleaseType.STABLE).name,
+            url = "https://hangar.papermc.io/$projectSlug/versions/$version",
             title = announcementTitle.getOrElse("Download from Hangar"),
         )
+    }
 
     override fun printDryRunInfo(logger: Logger) {}
 
@@ -38,31 +42,30 @@ abstract class Hangar @Inject constructor(
     abstract class UploadWorkAction : PublishWorkAction<UploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
-                val resolvedPlatforms = platforms.get().map {
-                    HangarPlatform(
-                        platform = it.platform,
-                        versions = it.versions,
-                        file = it.file.asFile.get(),
-                    )
-                }
-
                 val api = HangarApi(
                     apiKey = accessToken.get(),
-                    apiEndpoint = apiEndpoint.orNull ?: "https://hangar.papermc.io/api/v1",
+                    apiEndpoint = apiEndpoint.orNull
+                        ?: "https://hangar.papermc.io/api/v1/",
                 )
 
+                val channel = HangarApi.ChannelType.valueOf(type.get())
+
                 val response = api.publishVersion(
-                    projectSlug = project.get(),
+                    projectSlug = id.get(),
                     version = version.get(),
-                    channel = channel.get(),
+                    channel = channel,
                     changelog = changelog.get(),
-                    platforms = resolvedPlatforms,
+                    platform = projectType.get(),
+                    platformVersions = platformVersions.get(),
+                    file = file.get().asFile,
+                    pluginDependencies = emptyList(), // [NYI]
                 )
 
                 return HangarPublishResult(
-                    projectSlug = project.get(),
-                    version = response.name,
-                    channel = response.channel,
+                    projectSlug = id.get(),
+                    version = version.get(),
+                    channel = channel.name,
+                    url = response.url,
                     title = announcementTitle.getOrElse("Download from Hangar"),
                 )
             }

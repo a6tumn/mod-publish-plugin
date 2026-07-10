@@ -140,16 +140,17 @@ data class HangarPublishResult(
     val projectSlug: String,
     val version: String,
     val channel: String,
+    val url: String,
     override val title: String,
 ) : PublishResult() {
     override val type: String
         get() = "hangar"
 
     override val link: String
-        get() = "https://hangar.papermc.io/$projectSlug/versions/$version"
+        get() = url
 
     override val brandColor: Int
-        get() = 0xFFFFFF // Does not look like they have branding
+        get() = 0xFFFFFF
 }
 
 @ApiStatus.Internal
