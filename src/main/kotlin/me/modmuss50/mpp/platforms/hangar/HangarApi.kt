@@ -6,6 +6,7 @@ import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.platforms.hangar.dependency.HangarDependency
 import java.io.File
 import java.net.URLEncoder
 
@@ -38,7 +39,7 @@ class HangarApi(
     @Serializable
     data class PluginDependency(
         val name: String,
-        val required: Boolean = true,
+        val type: HangarDependency.DependencyType,
         val externalUrl: String? = null,
     )
 
@@ -118,7 +119,7 @@ class HangarApi(
         )
     }
 
-    private fun encodeSlug(slug: String): String =
+    fun encodeSlug(slug: String): String =
         slug.split("/")
             .joinToString("/") { URLEncoder.encode(it, Charsets.UTF_8) }
 }

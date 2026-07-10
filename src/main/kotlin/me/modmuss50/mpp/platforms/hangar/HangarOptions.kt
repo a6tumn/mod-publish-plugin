@@ -4,6 +4,7 @@ import me.modmuss50.mpp.PlatformOptions
 import me.modmuss50.mpp.PlatformOptionsInternal
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.PublishOptions
+import me.modmuss50.mpp.platforms.hangar.dependency.HangarDependencyContainer
 import org.gradle.api.Incubating
 import org.gradle.api.Task
 import org.gradle.api.provider.ListProperty
@@ -18,7 +19,7 @@ import org.gradle.api.tasks.TaskProvider
 */
 
 @Incubating
-interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions> {
+interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions>, HangarDependencyContainer {
 
     /**
      * The API URL, defaults to https://hangar.papermc.io/api/v1/.
@@ -47,6 +48,7 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
 
     fun from(other: HangarOptions) {
         super.from(other)
+        fromDependencies(other)
         apiEndpoint.set(other.apiEndpoint)
         id.set(other.id)
         projectType.convention(other.projectType)

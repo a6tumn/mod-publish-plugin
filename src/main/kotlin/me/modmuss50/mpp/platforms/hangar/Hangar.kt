@@ -58,7 +58,13 @@ abstract class Hangar @Inject constructor(
                     platform = projectType.get(),
                     platformVersions = platformVersions.get(),
                     file = file.get().asFile,
-                    pluginDependencies = emptyList(), // [NYI]
+                    pluginDependencies = dependencies.get().map {
+                        HangarApi.PluginDependency(
+                            name = it.name.get(),
+                            type = it.type.get(),
+                            externalUrl = it.url.orNull ?: "$apiEndpoint/projects/${api.encodeSlug(id.get())}/",
+                        )
+                    },
                 )
 
                 return HangarPublishResult(
