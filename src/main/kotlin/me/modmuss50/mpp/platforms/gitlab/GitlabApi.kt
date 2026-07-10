@@ -82,7 +82,12 @@ class GitlabApi(
         val url = "$apiEndpoint/projects/$projectId/releases"
         val body = HttpRequest.BodyPublishers.ofString(httpContext.json.encodeToString(request))
         val headersWithContentType = headers + ("Content-Type" to "application/json")
-        return httpContext.post(url, body, headersWithContentType)
+
+        return httpContext.post(
+            url = url,
+            body = body,
+            headers = headersWithContentType
+        )
     }
 
     fun getRelease(
@@ -91,7 +96,11 @@ class GitlabApi(
     ): Release {
         val encodedTag = URLEncoder.encode(tagName, Charsets.UTF_8)
         val url = "$apiEndpoint/projects/$projectId/releases/$encodedTag"
-        return httpContext.get(url, headers)
+
+        return httpContext.get(
+            url = url,
+            headers = headers
+        )
     }
 
     fun updateRelease(
@@ -103,7 +112,12 @@ class GitlabApi(
         val url = "$apiEndpoint/projects/$projectId/releases/$encodedTag"
         val body = HttpRequest.BodyPublishers.ofString(httpContext.json.encodeToString(request))
         val headersWithContentType = headers + ("Content-Type" to "application/json")
-        return httpContext.put(url, body, headersWithContentType)
+
+        return httpContext.put(
+            url = url,
+            body = body,
+            headers = headersWithContentType
+        )
     }
 
     fun uploadAsset(
