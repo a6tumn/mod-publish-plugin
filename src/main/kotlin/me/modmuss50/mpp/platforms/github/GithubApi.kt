@@ -69,7 +69,11 @@ class GithubApi(
     // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#get-a-repository
     fun getRepository(repository: String): Repository {
         val url = "$apiEndpoint/repos/$repository"
-        return httpContext.get(url, headers)
+
+        return httpContext.get(
+            url = url,
+            headers = headers,
+        )
     }
 
     // https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#create-a-release
@@ -80,7 +84,12 @@ class GithubApi(
         val url = "$apiEndpoint/repos/$repository/releases"
         val body = HttpRequest.BodyPublishers.ofString(httpContext.json.encodeToString(request))
         val headersWithContentType = headers + ("Content-Type" to "application/json")
-        return httpContext.post(url, body, headersWithContentType)
+
+        return httpContext.post(
+            url = url,
+            body = body,
+            headers = headersWithContentType,
+        )
     }
 
     // https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-a-release
@@ -89,7 +98,11 @@ class GithubApi(
         releaseId: Long,
     ): Release {
         val url = "$apiEndpoint/repos/$repository/releases/$releaseId"
-        return httpContext.get(url, headers)
+
+        return httpContext.get(
+            url = url,
+            headers = headers,
+        )
     }
 
     // https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#update-a-release
@@ -101,7 +114,12 @@ class GithubApi(
         val url = "$apiEndpoint/repos/$repository/releases/$releaseId"
         val body = HttpRequest.BodyPublishers.ofString(httpContext.json.encodeToString(request))
         val headersWithContentType = headers + ("Content-Type" to "application/json")
-        return httpContext.patch(url, body, headersWithContentType)
+
+        return httpContext.patch(
+            url = url,
+            body = body,
+            headers = headersWithContentType,
+        )
     }
 
     // https://docs.github.com/en/rest/releases/assets?apiVersion=2022-11-28#upload-a-release-asset
@@ -114,6 +132,11 @@ class GithubApi(
         val url = "$uploadUrl?name=${URLEncoder.encode(file.name, Charsets.UTF_8)}"
         val body = HttpRequest.BodyPublishers.ofFile(file.toPath())
         val headersWithContentType = headers + ("Content-Type" to "application/java-archive")
-        httpContext.post<Asset>(url, body, headersWithContentType)
+
+        httpContext.post<Asset>(
+            url = url,
+            body = body,
+            headers = headersWithContentType,
+        )
     }
 }

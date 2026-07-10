@@ -86,7 +86,7 @@ class GitlabApi(
         return httpContext.post(
             url = url,
             body = body,
-            headers = headersWithContentType
+            headers = headersWithContentType,
         )
     }
 
@@ -99,7 +99,7 @@ class GitlabApi(
 
         return httpContext.get(
             url = url,
-            headers = headers
+            headers = headers,
         )
     }
 
@@ -116,7 +116,7 @@ class GitlabApi(
         return httpContext.put(
             url = url,
             body = body,
-            headers = headersWithContentType
+            headers = headersWithContentType,
         )
     }
 
