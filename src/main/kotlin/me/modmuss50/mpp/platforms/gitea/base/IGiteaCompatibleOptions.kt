@@ -14,9 +14,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 import java.net.URI
 
-interface GiteaCompatibleOptions :
-    PlatformOptions,
-    PlatformOptionsInternal<GiteaCompatibleOptions> {
+interface IGiteaCompatibleOptions : PlatformOptions, PlatformOptionsInternal<IGiteaCompatibleOptions> {
 
     @get:InputFile
     @get:Optional
@@ -76,7 +74,7 @@ interface GiteaCompatibleOptions :
         apiEndpoint.convention("$uri/api/v1")
     }
 
-    fun from(other: GiteaCompatibleOptions) {
+    fun from(other: IGiteaCompatibleOptions) {
         super.from(other)
         repository.convention(other.repository)
         commitish.convention(other.commitish)
@@ -87,12 +85,12 @@ interface GiteaCompatibleOptions :
         hostType.convention(other.hostType)
     }
 
-    fun from(other: Provider<GiteaCompatibleOptions>) {
+    fun from(other: Provider<IGiteaCompatibleOptions>) {
         from(other.get())
     }
 
     fun from(
-        other: Provider<GiteaCompatibleOptions>,
+        other: Provider<IGiteaCompatibleOptions>,
         publishOptions: Provider<PublishOptions>,
     ) {
         from(other)
@@ -106,7 +104,7 @@ interface GiteaCompatibleOptions :
         val publishTask = task.map { it as PublishModTask }
         releaseResult.set(publishTask.flatMap { it.result })
 
-        val options = publishTask.map { it.platform as GiteaCompatibleOptions }
+        val options = publishTask.map { it.platform as IGiteaCompatibleOptions }
         if (options.get().hostType.get() != hostType.get()) { // May not be necessary, but should reduce confusion.
             throw IllegalStateException(
                 "Unable to make a ${options.get().hostType.get().friendlyString} instance a parent of a ${hostType.get().friendlyString} instance",

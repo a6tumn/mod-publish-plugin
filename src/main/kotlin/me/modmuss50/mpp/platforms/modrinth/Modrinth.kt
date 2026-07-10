@@ -45,16 +45,16 @@ abstract class Modrinth @Inject constructor(
         }
     }
 
-    interface UploadParams :
+    interface IUploadParams :
         PublishWorkParameters,
         IModrinthOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<UploadParams> {
+    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = ModrinthApi(
                     accessToken = accessToken.get(),
-                    baseUrl = apiEndpoint.get()
+                    baseUrl = apiEndpoint.get(),
                 )
 
                 val primaryFileKey = "primaryFile"

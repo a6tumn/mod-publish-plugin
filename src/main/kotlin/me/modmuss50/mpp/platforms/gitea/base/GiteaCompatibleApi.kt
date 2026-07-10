@@ -67,14 +67,22 @@ class GiteaCompatibleApi(
                 "Content-Type" to "application/json",
             )
 
+    // https://docs.gitea.com/api/1.24/#tag/repository/operation/repoGetRelease
+    fun getRelease(id: Long): Release = httpContext.get(
+        url = "$baseUrl/repos/$repository/releases/$id",
+        headers = headers,
+    )
+
     // https://docs.gitea.com/api/1.24/#tag/repository/operation/repoCreateRelease
     fun createRelease(metadata: CreateRelease): Release {
         val body = HttpRequest.BodyPublishers.ofString(Json.encodeToString(metadata))
-        return httpContext.post("$baseUrl/repos/$repository/releases", body, headers)
-    }
 
-    // https://docs.gitea.com/api/1.24/#tag/repository/operation/repoGetRelease
-    fun getRelease(id: Long): Release = httpContext.get("$baseUrl/repos/$repository/releases/$id", headers)
+        return httpContext.post(
+            url = "$baseUrl/repos/$repository/releases",
+            body = body,
+            headers = headers,
+        )
+    }
 
     // https://docs.gitea.com/api/1.24/#tag/repository/operation/repoCreateReleaseAttachment
     fun uploadAsset(
@@ -88,7 +96,11 @@ class GiteaCompatibleApi(
         val multipartHeaders = headers.toMutableMap()
         multipartHeaders["Content-Type"] = bodyBuilder.getContentType()
 
-        return httpContext.post(release.uploadUrl, bodyBuilder.build(), multipartHeaders)
+        return httpContext.post(
+            url = release.uploadUrl,
+            body = bodyBuilder.build(),
+            headers = multipartHeaders,
+        )
     }
 
     // https://docs.gitea.com/api/1.24/#tag/repository/operation/repoEditRelease
@@ -101,6 +113,11 @@ class GiteaCompatibleApi(
                 }
                 """.trimIndent(),
             )
-        return httpContext.patch("$baseUrl/repos/$repository/releases/${release.id}", body, headers)
+
+        return httpContext.patch(
+            url = "$baseUrl/repos/$repository/releases/${release.id}",
+            body = body,
+            headers = headers,
+        )
     }
 }

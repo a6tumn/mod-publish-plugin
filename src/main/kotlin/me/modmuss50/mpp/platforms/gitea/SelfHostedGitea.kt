@@ -8,18 +8,15 @@ import me.modmuss50.mpp.PublishWorkAction
 import me.modmuss50.mpp.PublishWorkParameters
 import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleApi
-import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleOptions
+import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
 import org.gradle.api.logging.Logger
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
 
-abstract class SelfHostedGitea
-@Inject
-constructor(
+abstract class SelfHostedGitea @Inject constructor(
     name: String,
-) : Platform(name),
-    GiteaCompatibleOptions {
+) : Platform(name), IGiteaCompatibleOptions {
     override fun publish(context: PublishContext) {
         val files = additionalFiles.files.toMutableList()
 
@@ -54,17 +51,22 @@ constructor(
 
     fun capitalizedName(): String = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
-    interface UploadParams :
+    interface IUploadParams :
         PublishWorkParameters,
-        GiteaCompatibleOptions
+        IGiteaCompatibleOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<UploadParams> {
+    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val hostDisplayName = hostDisplayName.getOrElse(hostType.get().friendlyString)
                 val brandColor = hostBrandColor.getOrElse(hostType.get().defaultBrandColor)
 
-                val api = GiteaCompatibleApi(accessToken.get(), apiEndpoint.get(), repository.get())
+                val api = GiteaCompatibleApi(
+                    accessToken = accessToken.get(),
+                    baseUrl = apiEndpoint.get(),
+                    repository = repository.get(),
+                )
+
                 val (release, created) = getOrCreateRelease(api)
 
                 val files = additionalFiles.files.toMutableList()
