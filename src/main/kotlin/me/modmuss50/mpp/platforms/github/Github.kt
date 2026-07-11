@@ -1,5 +1,10 @@
 package me.modmuss50.mpp.platforms.github
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import me.modmuss50.mpp.GithubPublishResult
 import me.modmuss50.mpp.Platform
 import me.modmuss50.mpp.PlatformOptions
@@ -159,8 +164,14 @@ abstract class Github @Inject constructor(name: String) : Platform(name), Github
                     throw IllegalStateException("Github file names must be unique within a release, found duplicates: $noneUniqueNames")
                 }
 
-                for (file in files) {
-                    api.uploadAsset(release, file)
+                runBlocking {
+                    coroutineScope {
+                        files.map { file ->
+                            async(Dispatchers.IO.limitedParallelism(4)) {
+                                api.uploadAsset(release, file)
+                            }
+                        }.awaitAll()
+                    }
                 }
 
                 if (created) {

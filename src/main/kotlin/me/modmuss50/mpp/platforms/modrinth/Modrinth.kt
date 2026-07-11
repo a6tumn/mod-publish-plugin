@@ -1,5 +1,10 @@
 package me.modmuss50.mpp.platforms.modrinth
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import me.modmuss50.mpp.MinecraftApi
 import me.modmuss50.mpp.ModrinthPublishResult
 import me.modmuss50.mpp.Platform
@@ -265,7 +270,15 @@ constructor(
                     files["file_$index"] = additionalFile.toPath()
                 }
 
-                val dependencies = dependencies.get().map { toApiDependency(it, api) }
+                val dependencies = runBlocking {
+                    coroutineScope {
+                        dependencies.get().map { dependency ->
+                            async(Dispatchers.IO) {
+                                toApiDependency(dependency, api)
+                            }
+                        }.awaitAll()
+                    }
+                }
 
                 val metadata =
                     ModrinthApi.CreateVersion(

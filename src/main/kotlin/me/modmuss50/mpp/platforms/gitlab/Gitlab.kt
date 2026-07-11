@@ -1,5 +1,10 @@
 package me.modmuss50.mpp.platforms.gitlab
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import me.modmuss50.mpp.GitlabPublishResult
 import me.modmuss50.mpp.Platform
 import me.modmuss50.mpp.PlatformOptions
@@ -173,10 +178,15 @@ constructor(
                     )
                 }
 
-                val uploadedAssets =
-                    files.map { file ->
-                        api.uploadAsset(projectId.get(), file)
+                val uploadedAssets = runBlocking {
+                    coroutineScope {
+                        files.map { file ->
+                            async(Dispatchers.IO.limitedParallelism(4)) {
+                                api.uploadAsset(projectId.get(), file)
+                            }
+                        }.awaitAll()
                     }
+                }
 
                 val baseRelease =
                     if (releaseResult.created) {
