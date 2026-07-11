@@ -1,4 +1,4 @@
-package me.modmuss50.mpp
+package me.modmuss50.mpp.util
 
 import org.gradle.api.provider.ListProperty
 

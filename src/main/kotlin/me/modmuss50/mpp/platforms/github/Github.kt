@@ -1,12 +1,11 @@
 package me.modmuss50.mpp.platforms.github
 
-import me.modmuss50.mpp.GithubPublishResult
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishContext
-import me.modmuss50.mpp.PublishResult
-import me.modmuss50.mpp.PublishWorkAction
-import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.ReleaseType
+import me.modmuss50.mpp.internal.IPublishWorkAction
+import me.modmuss50.mpp.internal.IPublishWorkParameters
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishContext
+import me.modmuss50.mpp.platforms.PublishResult
+import me.modmuss50.mpp.util.ReleaseType
 import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
@@ -31,7 +30,7 @@ abstract class Github @Inject constructor(
     }
 
     override fun dryRunPublishResult(): PublishResult {
-        return GithubPublishResult(
+        return PublishResult.Github(
             repository = repository.get(),
             releaseId = 0,
             url = "https://github.com/modmuss50/mod-publish-plugin/dry-run?random=${Random.nextInt(0, 1000000)}",
@@ -43,10 +42,10 @@ abstract class Github @Inject constructor(
     }
 
     interface IUploadParams :
-        PublishWorkParameters,
+        IPublishWorkParameters,
         IGithubOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
+    abstract class UploadWorkAction : IPublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = GithubApi(
@@ -78,7 +77,7 @@ abstract class Github @Inject constructor(
                     api.updateRelease(repo.fullName, release.id, GithubApi.UpdateReleaseRequest(draft = false))
                 }
 
-                return GithubPublishResult(
+                return PublishResult.Github(
                     repository = repository.get(),
                     releaseId = release.id,
                     url = release.htmlUrl,
@@ -92,7 +91,7 @@ abstract class Github @Inject constructor(
         private fun getOrCreateRelease(api: GithubApi, repo: GithubApi.Repository): ReleaseResult {
             with(parameters) {
                 if (releaseResult.isPresent) {
-                    val result = PublishResult.fromJson(releaseResult.get().asFile.readText()) as GithubPublishResult
+                    val result = PublishResult.fromJson(releaseResult.get().asFile.readText()) as PublishResult.Github
                     return ReleaseResult(api.getRelease(repo.fullName, result.releaseId), false)
                 }
 

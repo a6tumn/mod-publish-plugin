@@ -1,4 +1,4 @@
-package me.modmuss50.mpp.networking
+package me.modmuss50.mpp.network
 
 import kotlinx.serialization.json.Json
 import java.net.http.HttpClient

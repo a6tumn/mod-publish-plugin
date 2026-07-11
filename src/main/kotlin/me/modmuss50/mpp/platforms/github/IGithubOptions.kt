@@ -1,9 +1,9 @@
 package me.modmuss50.mpp.platforms.github
 
-import me.modmuss50.mpp.PlatformOptions
-import me.modmuss50.mpp.PlatformOptionsInternal
-import me.modmuss50.mpp.PublishModTask
-import me.modmuss50.mpp.PublishOptions
+import me.modmuss50.mpp.internal.IPlatformOptions
+import me.modmuss50.mpp.internal.IPlatformOptionsInternal
+import me.modmuss50.mpp.internal.PublishModTask
+import me.modmuss50.mpp.internal.IPublishOptions
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -14,7 +14,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.annotations.ApiStatus.Internal
 
-interface IGithubOptions : PlatformOptions, PlatformOptionsInternal<IGithubOptions> {
+interface IGithubOptions : IPlatformOptions, IPlatformOptionsInternal<IGithubOptions> {
     @get:InputFile
     @get:Optional
     override val file: RegularFileProperty
@@ -65,7 +65,7 @@ interface IGithubOptions : PlatformOptions, PlatformOptionsInternal<IGithubOptio
         from(other.get())
     }
 
-    fun from(other: Provider<IGithubOptions>, publishOptions: Provider<PublishOptions>) {
+    fun from(other: Provider<IGithubOptions>, publishOptions: Provider<IPublishOptions>) {
         from(other)
         from(publishOptions.get())
     }

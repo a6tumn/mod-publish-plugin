@@ -1,9 +1,9 @@
 package me.modmuss50.mpp.platforms.gitea.base
 
-import me.modmuss50.mpp.PlatformOptions
-import me.modmuss50.mpp.PlatformOptionsInternal
-import me.modmuss50.mpp.PublishModTask
-import me.modmuss50.mpp.PublishOptions
+import me.modmuss50.mpp.internal.IPlatformOptions
+import me.modmuss50.mpp.internal.IPlatformOptionsInternal
+import me.modmuss50.mpp.internal.PublishModTask
+import me.modmuss50.mpp.internal.IPublishOptions
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -14,7 +14,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 import java.net.URI
 
-interface IGiteaCompatibleOptions : PlatformOptions, PlatformOptionsInternal<IGiteaCompatibleOptions> {
+interface IGiteaCompatibleOptions : IPlatformOptions, IPlatformOptionsInternal<IGiteaCompatibleOptions> {
 
     @get:InputFile
     @get:Optional
@@ -91,7 +91,7 @@ interface IGiteaCompatibleOptions : PlatformOptions, PlatformOptionsInternal<IGi
 
     fun from(
         other: Provider<IGiteaCompatibleOptions>,
-        publishOptions: Provider<PublishOptions>,
+        publishOptions: Provider<IPublishOptions>,
     ) {
         from(other)
         from(publishOptions.get())

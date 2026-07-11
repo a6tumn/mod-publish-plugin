@@ -1,8 +1,8 @@
 package me.modmuss50.mpp.platforms.discord
 
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishModTask
-import me.modmuss50.mpp.PublishResult
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishModTask
+import me.modmuss50.mpp.platforms.PublishResult
 import me.modmuss50.mpp.modPublishExtension
 import me.modmuss50.mpp.platforms.discord.options.IDiscordWebhookOptions
 import me.modmuss50.mpp.platforms.discord.options.IMessageStyleOptions

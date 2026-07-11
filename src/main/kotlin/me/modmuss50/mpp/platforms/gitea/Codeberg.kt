@@ -1,12 +1,11 @@
 package me.modmuss50.mpp.platforms.gitea
 
-import me.modmuss50.mpp.GiteaCompatiblePublishResult
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishContext
-import me.modmuss50.mpp.PublishResult
-import me.modmuss50.mpp.PublishWorkAction
-import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.ReleaseType
+import me.modmuss50.mpp.internal.IPublishWorkAction
+import me.modmuss50.mpp.internal.IPublishWorkParameters
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishContext
+import me.modmuss50.mpp.platforms.PublishResult
+import me.modmuss50.mpp.util.ReleaseType
 import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleApi
 import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatiblePlatform
 import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
@@ -34,7 +33,7 @@ abstract class Codeberg @Inject constructor(
     }
 
     override fun dryRunPublishResult(): PublishResult =
-        GiteaCompatiblePublishResult(
+        PublishResult.GiteaCompatible(
             repository = repository.get(),
             releaseId = 0,
             url = "https://github.com/modmuss50/mod-publish-plugin/dry-run?random=${Random.nextInt(0, 1000000)}",
@@ -46,10 +45,10 @@ abstract class Codeberg @Inject constructor(
     }
 
     interface IUploadParams :
-        PublishWorkParameters,
+        IPublishWorkParameters,
         IGiteaCompatibleOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
+    abstract class UploadWorkAction : IPublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = GiteaCompatibleApi(
@@ -83,7 +82,7 @@ abstract class Codeberg @Inject constructor(
                     api.publishRelease(release)
                 }
 
-                return GiteaCompatiblePublishResult(
+                return PublishResult.GiteaCompatible(
                     repository = repository.get(),
                     releaseId = release.id,
                     url = release.htmlUrl,
@@ -101,7 +100,7 @@ abstract class Codeberg @Inject constructor(
         private fun getOrCreateRelease(api: GiteaCompatibleApi): ReleaseResult {
             with(parameters) {
                 if (releaseResult.isPresent) {
-                    val result = PublishResult.fromJson(releaseResult.get().asFile.readText()) as GiteaCompatiblePublishResult
+                    val result = PublishResult.fromJson(releaseResult.get().asFile.readText()) as PublishResult.GiteaCompatible
                     return ReleaseResult(api.getRelease(result.releaseId), false)
                 }
 

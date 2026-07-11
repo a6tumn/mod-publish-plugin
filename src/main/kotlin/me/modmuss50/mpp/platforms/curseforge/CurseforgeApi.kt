@@ -3,12 +3,12 @@ package me.modmuss50.mpp.platforms.curseforge
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import me.modmuss50.mpp.PlatformDependency
-import me.modmuss50.mpp.networking.HttpApi.get
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.HttpException
-import me.modmuss50.mpp.networking.MultipartBodyBuilder
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.internal.IPlatformDependency
+import me.modmuss50.mpp.network.HttpApi.get
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.HttpException
+import me.modmuss50.mpp.network.MultipartBodyBuilder
+import me.modmuss50.mpp.network.RequestContext
 import java.nio.file.Path
 import kotlin.io.path.name
 
@@ -60,11 +60,11 @@ class CurseforgeApi(
         ;
 
         companion object {
-            fun valueOf(type: me.modmuss50.mpp.ReleaseType): ReleaseType =
+            fun valueOf(type: me.modmuss50.mpp.util.ReleaseType): ReleaseType =
                 when (type) {
-                    me.modmuss50.mpp.ReleaseType.STABLE -> RELEASE
-                    me.modmuss50.mpp.ReleaseType.BETA -> BETA
-                    me.modmuss50.mpp.ReleaseType.ALPHA -> ALPHA
+                    me.modmuss50.mpp.util.ReleaseType.STABLE -> RELEASE
+                    me.modmuss50.mpp.util.ReleaseType.BETA -> BETA
+                    me.modmuss50.mpp.util.ReleaseType.ALPHA -> ALPHA
                 }
         }
     }
@@ -128,12 +128,12 @@ class CurseforgeApi(
         ;
 
         companion object {
-            fun valueOf(type: PlatformDependency.DependencyType): RelationType =
+            fun valueOf(type: IPlatformDependency.DependencyType): RelationType =
                 when (type) {
-                    PlatformDependency.DependencyType.REQUIRED -> REQUIRED_DEPENDENCY
-                    PlatformDependency.DependencyType.OPTIONAL -> OPTIONAL_DEPENDENCY
-                    PlatformDependency.DependencyType.INCOMPATIBLE -> INCOMPATIBLE
-                    PlatformDependency.DependencyType.EMBEDDED -> EMBEDDED_LIBRARY
+                    IPlatformDependency.DependencyType.REQUIRED -> REQUIRED_DEPENDENCY
+                    IPlatformDependency.DependencyType.OPTIONAL -> OPTIONAL_DEPENDENCY
+                    IPlatformDependency.DependencyType.INCOMPATIBLE -> INCOMPATIBLE
+                    IPlatformDependency.DependencyType.EMBEDDED -> EMBEDDED_LIBRARY
                 }
         }
     }

@@ -1,9 +1,9 @@
 package me.modmuss50.mpp.platforms.modrinth.options
 
-import me.modmuss50.mpp.MinecraftApi
-import me.modmuss50.mpp.PlatformOptions
-import me.modmuss50.mpp.PlatformOptionsInternal
-import me.modmuss50.mpp.PublishOptions
+import me.modmuss50.mpp.util.MinecraftApi
+import me.modmuss50.mpp.internal.IPlatformOptions
+import me.modmuss50.mpp.internal.IPlatformOptionsInternal
+import me.modmuss50.mpp.internal.IPublishOptions
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import me.modmuss50.mpp.platforms.modrinth.dependencies.IModrinthDependency
 import me.modmuss50.mpp.platforms.modrinth.dependencies.IModrinthDependencyContainer
@@ -16,7 +16,7 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.annotations.ApiStatus
 import kotlin.reflect.KClass
 
-interface IModrinthOptions : PlatformOptions, PlatformOptionsInternal<IModrinthOptions>, IModrinthDependencyContainer {
+interface IModrinthOptions : IPlatformOptions, IPlatformOptionsInternal<IModrinthOptions>, IModrinthDependencyContainer {
     companion object {
         // https://github.com/modrinth/labrinth/blob/ae1c5342f2017c1c93008d1e87f1a29549dca92f/src/scheduler.rs#L112
         @JvmStatic
@@ -88,7 +88,7 @@ interface IModrinthOptions : PlatformOptions, PlatformOptionsInternal<IModrinthO
 
     fun from(
         other: Provider<IModrinthOptions>,
-        publishOptions: Provider<PublishOptions>,
+        publishOptions: Provider<IPublishOptions>,
     ) {
         from(other)
         from(publishOptions.get())

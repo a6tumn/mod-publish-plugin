@@ -1,13 +1,12 @@
 package me.modmuss50.mpp.platforms.modrinth
 
-import me.modmuss50.mpp.ModrinthPublishResult
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishContext
-import me.modmuss50.mpp.PublishResult
-import me.modmuss50.mpp.PublishWorkAction
-import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.Retry
-import me.modmuss50.mpp.Validators
+import me.modmuss50.mpp.internal.IPublishWorkAction
+import me.modmuss50.mpp.internal.IPublishWorkParameters
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishContext
+import me.modmuss50.mpp.platforms.PublishResult
+import me.modmuss50.mpp.util.Retry
+import me.modmuss50.mpp.util.Validators
 import me.modmuss50.mpp.path
 import me.modmuss50.mpp.platforms.modrinth.dependencies.IModrinthDependency
 import me.modmuss50.mpp.platforms.modrinth.options.IModrinthOptions
@@ -31,7 +30,7 @@ abstract class Modrinth @Inject constructor(
     }
 
     override fun dryRunPublishResult(): PublishResult =
-        ModrinthPublishResult(
+        PublishResult.Modrinth(
             // Use a random file ID so that the URL is different each time, this is needed because discord drops duplicate URLs
             id = "${Random.nextInt(0, 1000000)}",
             projectId = "dry-run",
@@ -46,10 +45,10 @@ abstract class Modrinth @Inject constructor(
     }
 
     interface IUploadParams :
-        PublishWorkParameters,
+        IPublishWorkParameters,
         IModrinthOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
+    abstract class UploadWorkAction : IPublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = ModrinthApi(
@@ -94,7 +93,7 @@ abstract class Modrinth @Inject constructor(
                     }
                 }
 
-                return ModrinthPublishResult(
+                return PublishResult.Modrinth(
                     id = response.id,
                     projectId = response.projectId,
                     title = announcementTitle.getOrElse("Download from Modrinth"),

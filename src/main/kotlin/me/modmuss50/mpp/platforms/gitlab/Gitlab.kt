@@ -1,12 +1,11 @@
 package me.modmuss50.mpp.platforms.gitlab
 
-import me.modmuss50.mpp.GitlabPublishResult
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishContext
-import me.modmuss50.mpp.PublishResult
-import me.modmuss50.mpp.PublishWorkAction
-import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.networking.HttpException
+import me.modmuss50.mpp.internal.IPublishWorkAction
+import me.modmuss50.mpp.internal.IPublishWorkParameters
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishContext
+import me.modmuss50.mpp.platforms.PublishResult
+import me.modmuss50.mpp.network.HttpException
 import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
@@ -28,7 +27,7 @@ abstract class Gitlab @Inject constructor(
     }
 
     override fun dryRunPublishResult(): PublishResult =
-        GitlabPublishResult(
+        PublishResult.Gitlab(
             projectId = projectId.get(),
             tagName = tagName.get(),
             url = "https://gitlab.com/dry-run?random=${Random.nextInt(0, 1000000)}",
@@ -38,10 +37,10 @@ abstract class Gitlab @Inject constructor(
     override fun printDryRunInfo(logger: Logger) {}
 
     interface IUploadParams :
-        PublishWorkParameters,
+        IPublishWorkParameters,
         IGitlabOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
+    abstract class UploadWorkAction : IPublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api =
@@ -107,7 +106,7 @@ abstract class Gitlab @Inject constructor(
                     ),
                 )
 
-                return GitlabPublishResult(
+                return PublishResult.Gitlab(
                     projectId = projectId.get(),
                     tagName = tagName.get(),
                     url = "https://gitlab.com/projects/${projectId.get()}/releases/${tagName.get()}",
@@ -127,7 +126,7 @@ abstract class Gitlab @Inject constructor(
                     val result =
                         PublishResult.fromJson(
                             releaseResult.get().asFile.readText(),
-                        ) as GitlabPublishResult
+                        ) as PublishResult.Gitlab
 
                     return ReleaseResult(
                         api.getRelease(projectId.get(), result.tagName),

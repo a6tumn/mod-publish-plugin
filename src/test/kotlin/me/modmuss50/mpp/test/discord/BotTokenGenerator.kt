@@ -1,8 +1,8 @@
 package me.modmuss50.mpp.test.discord
 
 import kotlinx.serialization.Serializable
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.RequestContext
 import java.io.File
 import java.net.http.HttpRequest
 

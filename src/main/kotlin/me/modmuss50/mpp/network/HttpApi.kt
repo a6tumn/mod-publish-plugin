@@ -1,4 +1,4 @@
-package me.modmuss50.mpp.networking
+package me.modmuss50.mpp.network
 
 import java.net.URI
 import java.net.http.HttpRequest

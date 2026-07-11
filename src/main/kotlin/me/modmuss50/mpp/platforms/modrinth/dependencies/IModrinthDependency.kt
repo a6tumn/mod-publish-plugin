@@ -1,11 +1,11 @@
 package me.modmuss50.mpp.platforms.modrinth.dependencies
 
-import me.modmuss50.mpp.PlatformDependency
+import me.modmuss50.mpp.internal.IPlatformDependency
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 
-interface IModrinthDependency : PlatformDependency {
+interface IModrinthDependency : IPlatformDependency {
     @get:Input
     @get:Optional
     val id: Property<String>

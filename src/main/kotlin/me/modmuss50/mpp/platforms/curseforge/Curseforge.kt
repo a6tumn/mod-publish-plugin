@@ -1,13 +1,12 @@
 package me.modmuss50.mpp.platforms.curseforge
 
-import me.modmuss50.mpp.CurseForgePublishResult
-import me.modmuss50.mpp.Platform
-import me.modmuss50.mpp.PublishContext
-import me.modmuss50.mpp.PublishResult
-import me.modmuss50.mpp.PublishWorkAction
-import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.Retry
-import me.modmuss50.mpp.Validators
+import me.modmuss50.mpp.internal.IPublishWorkAction
+import me.modmuss50.mpp.internal.IPublishWorkParameters
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishContext
+import me.modmuss50.mpp.platforms.PublishResult
+import me.modmuss50.mpp.util.Retry
+import me.modmuss50.mpp.util.Validators
 import me.modmuss50.mpp.path
 import me.modmuss50.mpp.platforms.curseforge.options.ICurseforgeOptions
 import org.gradle.api.logging.Logger
@@ -34,7 +33,7 @@ abstract class Curseforge @Inject constructor(
     }
 
     override fun dryRunPublishResult(): PublishResult =
-        CurseForgePublishResult(
+        PublishResult.CurseForge(
             projectId = projectId.get(),
             projectSlug = projectSlug.map { "dry-run" }.orNull,
             // Use a random file ID so that the URL is different each time, this is needed because Discord drops duplicate URLs
@@ -49,10 +48,10 @@ abstract class Curseforge @Inject constructor(
     }
 
     interface IUploadParams :
-        PublishWorkParameters,
+        IPublishWorkParameters,
         ICurseforgeOptions
 
-    abstract class UploadWorkAction : PublishWorkAction<IUploadParams> {
+    abstract class UploadWorkAction : IPublishWorkAction<IUploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = CurseforgeApi(
@@ -144,7 +143,7 @@ abstract class Curseforge @Inject constructor(
                     }
                 }
 
-                return CurseForgePublishResult(
+                return PublishResult.CurseForge(
                     projectId = projectId.get(),
                     projectSlug = projectSlug.orNull,
                     fileId = response.id,

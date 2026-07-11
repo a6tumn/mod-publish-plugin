@@ -1,10 +1,10 @@
 package me.modmuss50.mpp.platforms.curseforge.dependencies
 
-import me.modmuss50.mpp.PlatformDependency
+import me.modmuss50.mpp.internal.IPlatformDependency
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 
-interface ICurseforgeDependency : PlatformDependency {
+interface ICurseforgeDependency : IPlatformDependency {
     @get:Input
     val slug: Property<String>
 

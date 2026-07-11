@@ -1,9 +1,9 @@
 package me.modmuss50.mpp.platforms.curseforge.options
 
-import me.modmuss50.mpp.MinecraftApi
-import me.modmuss50.mpp.PlatformOptions
-import me.modmuss50.mpp.PlatformOptionsInternal
-import me.modmuss50.mpp.PublishOptions
+import me.modmuss50.mpp.internal.IPlatformOptions
+import me.modmuss50.mpp.internal.IPlatformOptionsInternal
+import me.modmuss50.mpp.util.MinecraftApi
+import me.modmuss50.mpp.internal.IPublishOptions
 import me.modmuss50.mpp.platforms.curseforge.dependencies.ICurseforgeDependency
 import me.modmuss50.mpp.platforms.curseforge.dependencies.ICurseforgeDependencyContainer
 import org.gradle.api.Action
@@ -20,7 +20,7 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.annotations.ApiStatus
 import kotlin.reflect.KClass
 
-interface ICurseforgeOptions : PlatformOptions, PlatformOptionsInternal<ICurseforgeOptions>, ICurseforgeDependencyContainer {
+interface ICurseforgeOptions : IPlatformOptions, IPlatformOptionsInternal<ICurseforgeOptions>, ICurseforgeDependencyContainer {
     @get:Input
     val projectId: Property<String>
 
@@ -85,7 +85,7 @@ interface ICurseforgeOptions : PlatformOptions, PlatformOptionsInternal<ICursefo
 
     fun from(
         other: Provider<ICurseforgeOptions>,
-        publishOptions: Provider<PublishOptions>,
+        publishOptions: Provider<IPublishOptions>,
     ) {
         from(other)
         from(publishOptions.get())

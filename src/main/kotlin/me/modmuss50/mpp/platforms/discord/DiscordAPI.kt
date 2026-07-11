@@ -3,9 +3,9 @@ package me.modmuss50.mpp.platforms.discord
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import me.modmuss50.mpp.networking.HttpApi.get
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.network.HttpApi.get
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.RequestContext
 import java.net.http.HttpRequest
 
 object DiscordAPI {

@@ -1,5 +1,7 @@
 package me.modmuss50.mpp
 
+import me.modmuss50.mpp.internal.Platform
+import me.modmuss50.mpp.internal.PublishModTask
 import me.modmuss50.mpp.platforms.curseforge.Curseforge
 import me.modmuss50.mpp.platforms.gitea.Codeberg
 import me.modmuss50.mpp.platforms.gitea.SelfHostedGitea

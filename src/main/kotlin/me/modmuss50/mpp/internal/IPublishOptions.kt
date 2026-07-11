@@ -1,5 +1,6 @@
-package me.modmuss50.mpp
+package me.modmuss50.mpp.internal
 
+import me.modmuss50.mpp.util.ReleaseType
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -10,11 +11,11 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
-import org.jetbrains.annotations.ApiStatus.Internal
+import org.jetbrains.annotations.ApiStatus
 import javax.inject.Inject
 
 // Contains options shared by each platform and the extension
-interface PublishOptions {
+interface IPublishOptions {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     val file: RegularFileProperty
@@ -42,10 +43,10 @@ interface PublishOptions {
     val maxRetries: Property<Int>
 
     @get:Inject
-    @get:Internal
+    @get:ApiStatus.Internal
     val _thisProject: Project
 
-    fun from(other: PublishOptions) {
+    fun from(other: IPublishOptions) {
         file.convention(other.file)
         version.convention(other.version)
         changelog.convention(other.changelog)

@@ -2,6 +2,10 @@ package me.modmuss50.mpp
 
 import groovy.lang.Closure
 import groovy.lang.DelegatesTo
+import me.modmuss50.mpp.internal.IPlatformOptions
+import me.modmuss50.mpp.internal.IPlatformOptionsInternal
+import me.modmuss50.mpp.internal.IPublishOptions
+import me.modmuss50.mpp.internal.Platform
 import me.modmuss50.mpp.platforms.curseforge.Curseforge
 import me.modmuss50.mpp.platforms.curseforge.options.ICurseforgeOptions
 import me.modmuss50.mpp.platforms.discord.DiscordWebhookTask
@@ -15,6 +19,7 @@ import me.modmuss50.mpp.platforms.gitlab.Gitlab
 import me.modmuss50.mpp.platforms.modrinth.Modrinth
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import me.modmuss50.mpp.platforms.modrinth.options.IModrinthOptions
+import me.modmuss50.mpp.util.ReleaseType
 import org.gradle.api.Action
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
@@ -29,7 +34,7 @@ import org.gradle.api.tasks.TaskProvider
 import java.nio.file.Path
 import kotlin.reflect.KClass
 
-abstract class ModPublishExtension(val project: Project) : PublishOptions {
+abstract class ModPublishExtension(val project: Project) : IPublishOptions {
     // Removes the need to import the release type, a little gross tho?
     val BETA = ReleaseType.BETA
     val ALPHA = ReleaseType.ALPHA
@@ -46,7 +51,8 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
     val SINGLEPLAYER_ONLY = ModrinthEnvironment.SINGLEPLAYER_ONLY
 
     abstract val dryRun: Property<Boolean>
-    val platforms: ExtensiblePolymorphicDomainObjectContainer<Platform> = project.objects.polymorphicDomainObjectContainer(Platform::class.java)
+    val platforms: ExtensiblePolymorphicDomainObjectContainer<Platform> = project.objects.polymorphicDomainObjectContainer(
+        Platform::class.java)
 
     init {
         dryRun.convention(false)
@@ -60,15 +66,15 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         }
     }
 
-    fun publishOptions(@DelegatesTo(PublishOptions::class) closure: Closure<*>): Provider<PublishOptions> {
+    fun publishOptions(@DelegatesTo(IPublishOptions::class) closure: Closure<*>): Provider<IPublishOptions> {
         return publishOptions {
             project.configure(it, closure)
         }
     }
 
-    fun publishOptions(action: Action<PublishOptions>): Provider<PublishOptions> {
+    fun publishOptions(action: Action<IPublishOptions>): Provider<IPublishOptions> {
         return project.provider {
-            val options = project.objects.newInstance(PublishOptions::class.java)
+            val options = project.objects.newInstance(IPublishOptions::class.java)
             options.from(this)
             action.execute(options)
             return@provider options
@@ -357,7 +363,7 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         }
     }
 
-    private fun <A : PlatformOptions, T : PlatformOptionsInternal<A>> configureOptions(klass: KClass<T>, action: Action<T>): Provider<T> {
+    private fun <A : IPlatformOptions, T : IPlatformOptionsInternal<A>> configureOptions(klass: KClass<T>, action: Action<T>): Provider<T> {
         return project.provider {
             val options = project.objects.newInstance(klass.java)
             options.setInternalDefaults()

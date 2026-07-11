@@ -2,10 +2,10 @@ package me.modmuss50.mpp.platforms.github
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.modmuss50.mpp.networking.HttpApi.get
-import me.modmuss50.mpp.networking.HttpApi.patch
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.network.HttpApi.get
+import me.modmuss50.mpp.network.HttpApi.patch
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.RequestContext
 import java.io.File
 import java.net.URLEncoder
 import java.net.http.HttpRequest

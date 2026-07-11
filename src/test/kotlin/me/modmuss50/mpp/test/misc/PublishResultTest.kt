@@ -1,9 +1,6 @@
 package me.modmuss50.mpp.test.misc
 
-import me.modmuss50.mpp.CurseForgePublishResult
-import me.modmuss50.mpp.GithubPublishResult
-import me.modmuss50.mpp.ModrinthPublishResult
-import me.modmuss50.mpp.PublishResult
+import me.modmuss50.mpp.platforms.PublishResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +19,7 @@ class PublishResultTest {
             """.trimIndent(),
         )
 
-        val github = result as GithubPublishResult
+        val github = result as PublishResult.Github
         assertEquals("test/test", github.repository)
         assertEquals(123, github.releaseId)
         assertEquals("https://github.com", github.url)
@@ -43,7 +40,7 @@ class PublishResultTest {
             """.trimIndent(),
         )
 
-        val curseforge = result as CurseForgePublishResult
+        val curseforge = result as PublishResult.CurseForge
         assertEquals("abc", curseforge.projectId)
         assertEquals(123, curseforge.fileId)
         assertEquals("test", curseforge.title)
@@ -62,7 +59,7 @@ class PublishResultTest {
             """.trimIndent(),
         )
 
-        val modrinth = result as ModrinthPublishResult
+        val modrinth = result as PublishResult.Modrinth
         assertEquals("test", modrinth.id)
         assertEquals("123", modrinth.projectId)
         assertEquals("test", modrinth.title)

@@ -1,6 +1,7 @@
-package me.modmuss50.mpp
+package me.modmuss50.mpp.internal
 
 import kotlinx.serialization.json.Json
+import me.modmuss50.mpp.modPublishExtension
 import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
 import me.modmuss50.mpp.platforms.github.IGithubOptions
 import me.modmuss50.mpp.platforms.gitlab.IGitlabOptions
@@ -20,7 +21,9 @@ import java.io.FileNotFoundException
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Re-upload mod each time")
-abstract class PublishModTask @Inject constructor(@Nested val platform: Platform) : DefaultTask() {
+abstract class PublishModTask @Inject constructor(
+    @Nested val platform: Platform
+) : DefaultTask() {
     @get:ApiStatus.Internal
     @get:Input
     abstract val dryRun: Property<Boolean>

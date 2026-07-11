@@ -3,12 +3,12 @@ package me.modmuss50.mpp.platforms.gitea.base
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import me.modmuss50.mpp.networking.HttpApi.get
-import me.modmuss50.mpp.networking.HttpApi.patch
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.HttpException
-import me.modmuss50.mpp.networking.MultipartBodyBuilder
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.network.HttpApi.get
+import me.modmuss50.mpp.network.HttpApi.patch
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.HttpException
+import me.modmuss50.mpp.network.MultipartBodyBuilder
+import me.modmuss50.mpp.network.RequestContext
 import java.io.File
 import java.net.http.HttpRequest
 

@@ -3,14 +3,14 @@ package me.modmuss50.mpp.platforms.modrinth
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import me.modmuss50.mpp.PlatformDependency
-import me.modmuss50.mpp.ReleaseType
-import me.modmuss50.mpp.networking.HttpApi.get
-import me.modmuss50.mpp.networking.HttpApi.patch
-import me.modmuss50.mpp.networking.HttpApi.post
-import me.modmuss50.mpp.networking.HttpException
-import me.modmuss50.mpp.networking.MultipartBodyBuilder
-import me.modmuss50.mpp.networking.RequestContext
+import me.modmuss50.mpp.internal.IPlatformDependency
+import me.modmuss50.mpp.util.ReleaseType
+import me.modmuss50.mpp.network.HttpApi.get
+import me.modmuss50.mpp.network.HttpApi.patch
+import me.modmuss50.mpp.network.HttpApi.post
+import me.modmuss50.mpp.network.HttpException
+import me.modmuss50.mpp.network.MultipartBodyBuilder
+import me.modmuss50.mpp.network.RequestContext
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.nio.file.Path
@@ -112,12 +112,12 @@ class ModrinthApi(
         ;
 
         companion object {
-            fun valueOf(type: PlatformDependency.DependencyType): DependencyType =
+            fun valueOf(type: IPlatformDependency.DependencyType): DependencyType =
                 when (type) {
-                    PlatformDependency.DependencyType.REQUIRED -> REQUIRED
-                    PlatformDependency.DependencyType.OPTIONAL -> OPTIONAL
-                    PlatformDependency.DependencyType.INCOMPATIBLE -> INCOMPATIBLE
-                    PlatformDependency.DependencyType.EMBEDDED -> EMBEDDED
+                    IPlatformDependency.DependencyType.REQUIRED -> REQUIRED
+                    IPlatformDependency.DependencyType.OPTIONAL -> OPTIONAL
+                    IPlatformDependency.DependencyType.INCOMPATIBLE -> INCOMPATIBLE
+                    IPlatformDependency.DependencyType.EMBEDDED -> EMBEDDED
                 }
         }
     }
