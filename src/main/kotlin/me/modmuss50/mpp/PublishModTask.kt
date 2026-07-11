@@ -1,9 +1,9 @@
 package me.modmuss50.mpp
 
 import kotlinx.serialization.json.Json
-import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleOptions
-import me.modmuss50.mpp.platforms.github.GithubOptions
-import me.modmuss50.mpp.platforms.gitlab.GitlabOptions
+import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
+import me.modmuss50.mpp.platforms.github.IGithubOptions
+import me.modmuss50.mpp.platforms.gitlab.IGitlabOptions
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -87,21 +87,21 @@ abstract class PublishModTask @Inject constructor(@Nested val platform: Platform
 
     private fun dryRunCopyMainFile() {
         // A bit of a hack to handle the optional main file for GitHub.
-        if (platform is GithubOptions) {
+        if (platform is IGithubOptions) {
             if (!platform.file.isPresent && platform.allowEmptyFiles.get()) {
                 return
             }
         }
 
         // Repeat the hack for Gitea.
-        if (platform is GiteaCompatibleOptions) {
+        if (platform is IGiteaCompatibleOptions) {
             if (!platform.file.isPresent && platform.allowEmptyFiles.get()) {
                 return
             }
         }
 
         // And GitLab...
-        if (platform is GitlabOptions) {
+        if (platform is IGitlabOptions) {
             if (!platform.file.isPresent && platform.allowEmptyFiles.get()) {
                 return
             }

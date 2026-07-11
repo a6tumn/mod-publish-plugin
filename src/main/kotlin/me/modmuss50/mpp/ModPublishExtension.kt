@@ -3,18 +3,18 @@ package me.modmuss50.mpp
 import groovy.lang.Closure
 import groovy.lang.DelegatesTo
 import me.modmuss50.mpp.platforms.curseforge.Curseforge
-import me.modmuss50.mpp.platforms.curseforge.CurseforgeOptions
+import me.modmuss50.mpp.platforms.curseforge.options.ICurseforgeOptions
 import me.modmuss50.mpp.platforms.discord.DiscordWebhookTask
 import me.modmuss50.mpp.platforms.gitea.Codeberg
 import me.modmuss50.mpp.platforms.gitea.SelfHostedGitea
-import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleOptions
 import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatiblePlatform
+import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
 import me.modmuss50.mpp.platforms.github.Github
-import me.modmuss50.mpp.platforms.github.GithubOptions
+import me.modmuss50.mpp.platforms.github.IGithubOptions
 import me.modmuss50.mpp.platforms.gitlab.Gitlab
 import me.modmuss50.mpp.platforms.modrinth.Modrinth
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
-import me.modmuss50.mpp.platforms.modrinth.ModrinthOptions
+import me.modmuss50.mpp.platforms.modrinth.options.IModrinthOptions
 import org.gradle.api.Action
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
@@ -97,14 +97,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         return platforms.maybeRegister(name, action)
     }
 
-    fun curseforgeOptions(@DelegatesTo(value = Curseforge::class) closure: Closure<*>): Provider<CurseforgeOptions> {
+    fun curseforgeOptions(@DelegatesTo(value = Curseforge::class) closure: Closure<*>): Provider<ICurseforgeOptions> {
         return curseforgeOptions {
             project.configure(it, closure)
         }
     }
 
-    fun curseforgeOptions(action: Action<CurseforgeOptions>): Provider<CurseforgeOptions> {
-        return configureOptions(CurseforgeOptions::class) {
+    fun curseforgeOptions(action: Action<ICurseforgeOptions>): Provider<ICurseforgeOptions> {
+        return configureOptions(ICurseforgeOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -132,14 +132,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         return platforms.maybeRegister(name, action)
     }
 
-    fun modrinthOptions(@DelegatesTo(value = Modrinth::class) closure: Closure<*>): Provider<ModrinthOptions> {
+    fun modrinthOptions(@DelegatesTo(value = Modrinth::class) closure: Closure<*>): Provider<IModrinthOptions> {
         return modrinthOptions {
             project.configure(it, closure)
         }
     }
 
-    fun modrinthOptions(action: Action<ModrinthOptions>): Provider<ModrinthOptions> {
-        return configureOptions(ModrinthOptions::class) {
+    fun modrinthOptions(action: Action<IModrinthOptions>): Provider<IModrinthOptions> {
+        return configureOptions(IModrinthOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -167,14 +167,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         return platforms.maybeRegister(name, action)
     }
 
-    fun githubOptions(@DelegatesTo(value = Github::class) closure: Closure<*>): Provider<GithubOptions> {
+    fun githubOptions(@DelegatesTo(value = Github::class) closure: Closure<*>): Provider<IGithubOptions> {
         return githubOptions {
             project.configure(it, closure)
         }
     }
 
-    fun githubOptions(action: Action<GithubOptions>): Provider<GithubOptions> {
-        return configureOptions(GithubOptions::class) {
+    fun githubOptions(action: Action<IGithubOptions>): Provider<IGithubOptions> {
+        return configureOptions(IGithubOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -205,14 +205,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         }
     }
 
-    fun giteaOptions(@DelegatesTo(value = SelfHostedGitea::class) closure: Closure<*>): Provider<GiteaCompatibleOptions> {
+    fun giteaOptions(@DelegatesTo(value = SelfHostedGitea::class) closure: Closure<*>): Provider<IGiteaCompatibleOptions> {
         return giteaOptions {
             project.configure(it, closure)
         }
     }
 
-    fun giteaOptions(action: Action<GiteaCompatibleOptions>): Provider<GiteaCompatibleOptions> {
-        return configureOptions(GiteaCompatibleOptions::class) {
+    fun giteaOptions(action: Action<IGiteaCompatibleOptions>): Provider<IGiteaCompatibleOptions> {
+        return configureOptions(IGiteaCompatibleOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -243,14 +243,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         }
     }
 
-    fun forgejoOptions(@DelegatesTo(value = SelfHostedGitea::class) closure: Closure<*>): Provider<GiteaCompatibleOptions> {
+    fun forgejoOptions(@DelegatesTo(value = SelfHostedGitea::class) closure: Closure<*>): Provider<IGiteaCompatibleOptions> {
         return forgejoOptions {
             project.configure(it, closure)
         }
     }
 
-    fun forgejoOptions(action: Action<GiteaCompatibleOptions>): Provider<GiteaCompatibleOptions> {
-        return configureOptions(GiteaCompatibleOptions::class) {
+    fun forgejoOptions(action: Action<IGiteaCompatibleOptions>): Provider<IGiteaCompatibleOptions> {
+        return configureOptions(IGiteaCompatibleOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -278,14 +278,14 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         return platforms.maybeRegister(name, action)
     }
 
-    fun codebergOptions(@DelegatesTo(value = Codeberg::class) closure: Closure<*>): Provider<GiteaCompatibleOptions> {
+    fun codebergOptions(@DelegatesTo(value = Codeberg::class) closure: Closure<*>): Provider<IGiteaCompatibleOptions> {
         return codebergOptions {
             project.configure(it, closure)
         }
     }
 
-    fun codebergOptions(action: Action<GiteaCompatibleOptions>): Provider<GiteaCompatibleOptions> {
-        return configureOptions(GiteaCompatibleOptions::class) {
+    fun codebergOptions(action: Action<IGiteaCompatibleOptions>): Provider<IGiteaCompatibleOptions> {
+        return configureOptions(IGiteaCompatibleOptions::class) {
             it.from(this)
             action.execute(it)
         }
