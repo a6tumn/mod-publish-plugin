@@ -4,7 +4,8 @@ import me.modmuss50.mpp.Platform
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.PublishResult
 import me.modmuss50.mpp.modPublishExtension
-import org.gradle.api.Action
+import me.modmuss50.mpp.platforms.discord.options.IDiscordWebhookOptions
+import me.modmuss50.mpp.platforms.discord.options.IMessageStyleOptions
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
@@ -13,8 +14,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -26,79 +25,8 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.annotations.ApiStatus
 import javax.inject.Inject
 
-interface DiscordWebhookOptions {
-    @get:Input
-    val webhookUrl: Property<String>
-
-    @get:Input
-    @get:Optional
-    val dryRunWebhookUrl: Property<String>
-
-    @get:Input
-    val username: Property<String>
-
-    @get:Input
-    @get:Optional
-    val avatarUrl: Property<String>
-
-    @get:Input
-    val content: Property<String>
-
-    @get:Nested
-    val style: Property<MessageStyle>
-
-    fun from(other: DiscordWebhookOptions) {
-        webhookUrl.convention(other.webhookUrl)
-        dryRunWebhookUrl.convention(other.dryRunWebhookUrl)
-        username.convention(other.username)
-        avatarUrl.convention(other.avatarUrl)
-        content.convention(other.content)
-        style.convention(other.style)
-    }
-
-    fun style(style: Action<MessageStyle>) {
-        style.execute(this.style.get())
-    }
-}
-
-@Suppress("MemberVisibilityCanBePrivate")
-interface MessageStyle {
-    @get:Input
-    val look: Property<String>
-
-    @get:Input
-    @get:Optional
-    val thumbnailUrl: Property<String>
-
-    @get:Input
-    @get:Optional
-    val color: Property<String>
-
-    @get:Input
-    @get:Optional
-    val link: Property<String>
-
-    fun from(other: MessageStyle) {
-        look.convention(other.look)
-        thumbnailUrl.convention(other.thumbnailUrl)
-        color.convention(other.color)
-        link.convention(other.link)
-    }
-}
-
-enum class MessageLook {
-    MODERN,
-    CLASSIC,
-}
-
-enum class LinkType {
-    EMBED,
-    BUTTON,
-    INLINE,
-}
-
 @DisableCachingByDefault(because = "Publish webhook each time")
-abstract class DiscordWebhookTask : DefaultTask(), DiscordWebhookOptions {
+abstract class DiscordWebhookTask : DefaultTask(), IDiscordWebhookOptions {
     @get:ApiStatus.Internal
     @get:Input
     abstract val dryRun: Property<Boolean>
@@ -118,7 +46,7 @@ abstract class DiscordWebhookTask : DefaultTask(), DiscordWebhookOptions {
         dryRun.set(project.modPublishExtension.dryRun)
         dryRun.finalizeValue()
 
-        with(project.objects.newInstance(MessageStyle::class.java)) {
+        with(project.objects.newInstance(IMessageStyleOptions::class.java)) {
             look.convention("CLASSIC")
             link.convention("EMBED")
 
@@ -191,7 +119,7 @@ abstract class DiscordWebhookTask : DefaultTask(), DiscordWebhookOptions {
         }
     }
 
-    interface DiscordWorkParameters : WorkParameters, DiscordWebhookOptions {
+    interface DiscordWorkParameters : WorkParameters, IDiscordWebhookOptions {
         val publishResults: ConfigurableFileCollection
 
         val dryRun: Property<Boolean>
@@ -318,7 +246,7 @@ abstract class DiscordWebhookTask : DefaultTask(), DiscordWebhookOptions {
          */
         fun createModernEmbed(): DiscordAPI.Embed {
             with(parameters) {
-                val style: MessageStyle = style.get()
+                val style: IMessageStyleOptions = style.get()
                 return DiscordAPI.Embed(
                     thumbnail = style.thumbnailUrl.map { DiscordAPI.EmbedThumbnail(url = it) }.orNull,
                     description = createMessageBody(),
@@ -446,5 +374,16 @@ abstract class DiscordWebhookTask : DefaultTask(), DiscordWebhookOptions {
                 return content
             }
         }
+    }
+
+    enum class MessageLook {
+        MODERN,
+        CLASSIC,
+    }
+
+    enum class LinkType {
+        EMBED,
+        BUTTON,
+        INLINE,
     }
 }
