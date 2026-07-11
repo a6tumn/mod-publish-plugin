@@ -9,11 +9,11 @@ import kotlin.reflect.KClass
 @ApiStatus.Internal
 class PublishContext(
     private val queue: WorkQueue,
-    private val result: RegularFile
+    private val result: RegularFile,
 ) {
     fun <T : IPublishWorkParameters> submit(
         workActionClass: KClass<out IPublishWorkAction<T>>,
-        parameterAction: Action<in T>
+        parameterAction: Action<in T>,
     ) {
         queue.submit(workActionClass.java) {
             it.result.set(result)

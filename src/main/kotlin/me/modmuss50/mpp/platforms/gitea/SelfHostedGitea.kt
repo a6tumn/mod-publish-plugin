@@ -3,11 +3,11 @@ package me.modmuss50.mpp.platforms.gitea
 import me.modmuss50.mpp.internal.IPublishWorkAction
 import me.modmuss50.mpp.internal.IPublishWorkParameters
 import me.modmuss50.mpp.internal.Platform
-import me.modmuss50.mpp.platforms.PublishResult
 import me.modmuss50.mpp.internal.PublishContext
-import me.modmuss50.mpp.util.ReleaseType
+import me.modmuss50.mpp.platforms.PublishResult
 import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatibleApi
 import me.modmuss50.mpp.platforms.gitea.base.IGiteaCompatibleOptions
+import me.modmuss50.mpp.util.ReleaseType
 import org.gradle.api.logging.Logger
 import java.util.Locale
 import javax.inject.Inject

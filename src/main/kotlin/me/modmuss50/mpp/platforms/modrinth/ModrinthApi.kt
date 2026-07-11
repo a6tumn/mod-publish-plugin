@@ -4,13 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.modmuss50.mpp.internal.IPlatformDependency
-import me.modmuss50.mpp.util.ReleaseType
 import me.modmuss50.mpp.network.HttpApi.get
 import me.modmuss50.mpp.network.HttpApi.patch
 import me.modmuss50.mpp.network.HttpApi.post
 import me.modmuss50.mpp.network.HttpException
 import me.modmuss50.mpp.network.MultipartBodyBuilder
 import me.modmuss50.mpp.network.RequestContext
+import me.modmuss50.mpp.util.ReleaseType
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.nio.file.Path

@@ -1,12 +1,12 @@
 package me.modmuss50.mpp.platforms.modrinth.options
 
-import me.modmuss50.mpp.util.MinecraftApi
 import me.modmuss50.mpp.internal.IPlatformOptions
 import me.modmuss50.mpp.internal.IPlatformOptionsInternal
 import me.modmuss50.mpp.internal.IPublishOptions
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import me.modmuss50.mpp.platforms.modrinth.dependencies.IModrinthDependency
 import me.modmuss50.mpp.platforms.modrinth.dependencies.IModrinthDependencyContainer
+import me.modmuss50.mpp.util.MinecraftApi
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property

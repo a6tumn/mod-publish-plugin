@@ -1,7 +1,7 @@
 package me.modmuss50.mpp.test.misc
 
-import me.modmuss50.mpp.util.MinecraftApi
 import me.modmuss50.mpp.test.MockWebServer
+import me.modmuss50.mpp.util.MinecraftApi
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

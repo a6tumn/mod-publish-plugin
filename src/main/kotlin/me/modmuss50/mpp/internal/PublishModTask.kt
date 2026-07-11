@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Re-upload mod each time")
 abstract class PublishModTask @Inject constructor(
-    @Nested val platform: Platform
+    @Nested val platform: Platform,
 ) : DefaultTask() {
     @get:ApiStatus.Internal
     @get:Input

@@ -2,10 +2,10 @@ package me.modmuss50.mpp.platforms.curseforge.options
 
 import me.modmuss50.mpp.internal.IPlatformOptions
 import me.modmuss50.mpp.internal.IPlatformOptionsInternal
-import me.modmuss50.mpp.util.MinecraftApi
 import me.modmuss50.mpp.internal.IPublishOptions
 import me.modmuss50.mpp.platforms.curseforge.dependencies.ICurseforgeDependency
 import me.modmuss50.mpp.platforms.curseforge.dependencies.ICurseforgeDependencyContainer
+import me.modmuss50.mpp.util.MinecraftApi
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project

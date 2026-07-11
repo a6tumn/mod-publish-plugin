@@ -52,7 +52,8 @@ abstract class ModPublishExtension(val project: Project) : IPublishOptions {
 
     abstract val dryRun: Property<Boolean>
     val platforms: ExtensiblePolymorphicDomainObjectContainer<Platform> = project.objects.polymorphicDomainObjectContainer(
-        Platform::class.java)
+        Platform::class.java,
+    )
 
     init {
         dryRun.convention(false)

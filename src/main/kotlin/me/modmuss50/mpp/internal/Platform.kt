@@ -10,7 +10,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 abstract class Platform @Inject constructor(
-    private val name: String
+    private val name: String,
 ) : Named, IPlatformOptions {
     @ApiStatus.Internal
     open fun validateInputs() {

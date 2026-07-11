@@ -2,8 +2,8 @@ package me.modmuss50.mpp.platforms.github
 
 import me.modmuss50.mpp.internal.IPlatformOptions
 import me.modmuss50.mpp.internal.IPlatformOptionsInternal
-import me.modmuss50.mpp.internal.PublishModTask
 import me.modmuss50.mpp.internal.IPublishOptions
+import me.modmuss50.mpp.internal.PublishModTask
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
