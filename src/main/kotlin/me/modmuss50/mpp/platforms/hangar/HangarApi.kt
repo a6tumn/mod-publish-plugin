@@ -1,6 +1,7 @@
 package me.modmuss50.mpp.platforms.hangar
 
 import kotlinx.serialization.Serializable
+import me.modmuss50.mpp.networking.HttpApi.get
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
@@ -52,6 +53,12 @@ class HangarApi(
         val url: String,
     )
 
+    @Serializable
+    data class PlatformVersionResponse(
+        val version: String,
+        val subVersions: List<String>,
+    )
+
     private val headers: Map<String, String>
         get() = mapOf("Authorization" to "Bearer $apiKey")
 
@@ -94,6 +101,12 @@ class HangarApi(
             headers = headers + ("Content-Type" to builder.getContentType()),
         )
     }
+
+    fun getPlatformVersions(platform: HangarPlatformType): List<PlatformVersionResponse> =
+        httpContext.get(
+            url = "$apiEndpoint/platforms/${platform.name}/versions",
+            headers = headers,
+        )
 
     fun encodeSlug(slug: String): String =
         slug.split("/")
