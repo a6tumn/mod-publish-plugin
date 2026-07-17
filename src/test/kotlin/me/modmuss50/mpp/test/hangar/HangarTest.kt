@@ -40,7 +40,7 @@ class HangarTest : IntegrationTest {
                         apiEndpoint = "${server.endpoint}"
                     }
                 }
-            """.trimIndent(),
+                """.trimIndent(),
             )
             .run("publishHangar")
 
@@ -72,7 +72,7 @@ class HangarTest : IntegrationTest {
                         parent(tasks.named("publishHangar"))
                     }
                 }
-            """.trimIndent(),
+                """.trimIndent(),
             )
             .run("publishHangarOther")
 
@@ -97,7 +97,7 @@ class HangarTest : IntegrationTest {
                         apiEndpoint = "${server.endpoint}"
                     }
                 }
-            """.trimIndent(),
+                """.trimIndent(),
             )
             .run("publishHangar")
 
