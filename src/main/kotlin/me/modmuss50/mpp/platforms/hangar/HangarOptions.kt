@@ -41,7 +41,7 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     val projectType: Property<HangarPlatformType>
 
     /**
-     * List of supported platform versions, i.e. `listOf("26.1", "26.1.1")`.
+     * List of supported platform versions, i.e. `addAll("26.1", "26.1.1")`.
      */
     @get:Input
     val platformVersions: ListProperty<String>
