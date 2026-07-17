@@ -46,6 +46,10 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     @get:Input
     val platformVersions: ListProperty<String>
 
+    override fun setInternalDefaults() {
+        apiEndpoint.convention("https://hangar.papermc.io/api/v1/")
+    }
+
     fun from(other: HangarOptions) {
         super.from(other)
         fromDependencies(other)

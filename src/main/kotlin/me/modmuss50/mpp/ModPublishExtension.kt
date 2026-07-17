@@ -14,6 +14,7 @@ import me.modmuss50.mpp.platforms.github.GithubOptions
 import me.modmuss50.mpp.platforms.gitlab.Gitlab
 import me.modmuss50.mpp.platforms.hangar.Hangar
 import me.modmuss50.mpp.platforms.hangar.HangarOptions
+import me.modmuss50.mpp.platforms.hangar.HangarPlatformType
 import me.modmuss50.mpp.platforms.modrinth.Modrinth
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import me.modmuss50.mpp.platforms.modrinth.ModrinthOptions
@@ -36,6 +37,10 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
     val BETA = ReleaseType.BETA
     val ALPHA = ReleaseType.ALPHA
     val STABLE = ReleaseType.STABLE
+
+    val PAPER = HangarPlatformType.PAPER
+    val VELOCITY = HangarPlatformType.VELOCITY
+    val WATERFALL = HangarPlatformType.WATERFALL
 
     val CLIENT_ONLY = ModrinthEnvironment.CLIENT_ONLY
     val SERVER_ONLY = ModrinthEnvironment.SERVER_ONLY
