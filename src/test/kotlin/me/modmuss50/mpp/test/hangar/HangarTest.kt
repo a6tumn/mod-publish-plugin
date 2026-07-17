@@ -36,6 +36,7 @@ class HangarTest : IntegrationTest {
                         accessToken = "123"
                         id = "mock-project"
                         projectType = PAPER
+                        channelType = "Release"
                         platformVersions.add("1.20.1")
                         apiEndpoint = "${server.endpoint}"
                     }
@@ -62,6 +63,7 @@ class HangarTest : IntegrationTest {
                         accessToken = "123"
                         id = "mock-project"
                         projectType = PAPER
+                        channelType = "Release"
                         platformVersions.add("1.20.1")
                         apiEndpoint = "${server.endpoint}"
                     }
@@ -93,6 +95,7 @@ class HangarTest : IntegrationTest {
                         accessToken = "123"
                         id = "mock-project"
                         projectType = PAPER
+                        channelType = "Release"
                         platformVersions.add("1.20.1")
                         apiEndpoint = "${server.endpoint}"
                     }

@@ -6,7 +6,6 @@ import me.modmuss50.mpp.PublishContext
 import me.modmuss50.mpp.PublishResult
 import me.modmuss50.mpp.PublishWorkAction
 import me.modmuss50.mpp.PublishWorkParameters
-import me.modmuss50.mpp.ReleaseType
 import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
@@ -27,7 +26,7 @@ abstract class Hangar @Inject constructor(
         return HangarPublishResult(
             projectSlug = projectSlug,
             version = version,
-            channel = HangarApi.ChannelType.valueOf(ReleaseType.STABLE).name,
+            channel = channelType.get(),
             url = "https://hangar.papermc.io/$projectSlug/versions/$version",
             title = announcementTitle.getOrElse("Download from Hangar"),
         )
@@ -48,12 +47,10 @@ abstract class Hangar @Inject constructor(
                         ?: "https://hangar.papermc.io/api/v1/",
                 )
 
-                val channel = HangarApi.ChannelType.valueOf(type.get())
-
                 val response = api.publishVersion(
                     projectSlug = id.get(),
                     version = version.get(),
-                    channel = channel,
+                    channel = channelType.get(),
                     changelog = changelog.get(),
                     platform = projectType.get(),
                     platformVersions = platformVersions.get(),
@@ -70,7 +67,7 @@ abstract class Hangar @Inject constructor(
                 return HangarPublishResult(
                     projectSlug = id.get(),
                     version = version.get(),
-                    channel = channel.name,
+                    channel = channelType.get(),
                     url = response.url,
                     title = announcementTitle.getOrElse("Download from Hangar"),
                 )

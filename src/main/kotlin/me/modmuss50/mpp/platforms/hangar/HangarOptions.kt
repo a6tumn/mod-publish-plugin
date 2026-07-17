@@ -41,6 +41,12 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     val projectType: Property<HangarPlatformType>
 
     /**
+     * The release channel for this publication, i.e. "Release".
+     */
+    @get:Input
+    val channelType: Property<String>
+
+    /**
      * List of supported platform versions, i.e. `addAll("26.1", "26.1.1")`.
      */
     @get:Input
@@ -53,9 +59,10 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
     fun from(other: HangarOptions) {
         super.from(other)
         fromDependencies(other)
-        apiEndpoint.set(other.apiEndpoint)
-        id.set(other.id)
+        apiEndpoint.convention(other.apiEndpoint)
+        id.convention(other.id)
         projectType.convention(other.projectType)
+        channelType.convention(other.channelType)
         platformVersions.convention(other.platformVersions)
     }
 
@@ -91,6 +98,8 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
         id.finalizeValue()
         projectType.set(options.flatMap { it.projectType })
         projectType.finalizeValue()
+        channelType.set(options.flatMap { it.channelType })
+        channelType.finalizeValue()
         platformVersions.set(options.flatMap { it.platformVersions })
         platformVersions.finalizeValue()
     }

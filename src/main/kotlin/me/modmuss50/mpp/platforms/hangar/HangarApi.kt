@@ -1,8 +1,6 @@
 package me.modmuss50.mpp.platforms.hangar
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.modmuss50.mpp.ReleaseType
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
@@ -33,7 +31,7 @@ class HangarApi(
         val platformDependencies: Map<String, List<String>>,
         val description: String? = null,
         val files: List<FileData>,
-        val channel: ChannelType,
+        val channel: String,
     )
 
     @Serializable
@@ -50,28 +48,6 @@ class HangarApi(
     )
 
     @Serializable
-    enum class ChannelType {
-        @SerialName("Release")
-        RELEASE,
-
-        @SerialName("Snapshot")
-        SNAPSHOT,
-
-        @SerialName("Alpha")
-        ALPHA,
-        ;
-
-        companion object {
-            fun valueOf(type: ReleaseType): ChannelType =
-                when (type) {
-                    ReleaseType.STABLE -> RELEASE
-                    ReleaseType.BETA -> SNAPSHOT
-                    ReleaseType.ALPHA -> ALPHA
-                }
-        }
-    }
-
-    @Serializable
     data class VersionResponse(
         val url: String,
     )
@@ -82,7 +58,7 @@ class HangarApi(
     fun publishVersion(
         projectSlug: String,
         version: String,
-        channel: ChannelType,
+        channel: String,
         changelog: String,
         platform: HangarPlatformType,
         platformVersions: List<String>,

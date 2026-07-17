@@ -7,12 +7,12 @@ import { Tabs, Tab } from 'nextra/components'
     publishMods {
         file = jar.archiveFile
         changelog = "Changelog"
-        type = STABLE
 
         hangar {
             accessToken = providers.environmentVariable("HANGAR_TOKEN")
             id = "ExampleProject"
             projectType = PAPER
+            channelType = "Release"
             platformVersions.add("26.1.2")
         }
     }
@@ -23,12 +23,12 @@ import { Tabs, Tab } from 'nextra/components'
     publishMods {
         file.set(jar.archiveFile)
         changelog.set("Changelog")
-        type.set(STABLE)
 
         hangar {
             accessToken.set(providers.environmentVariable("HANGAR_TOKEN"))
             id.set("ExampleProject")
             projectType.set(PAPER)
+            channelType.set("Release")
             platformVersions.add("26.1.2")
         }
     }
@@ -79,6 +79,7 @@ This is useful where you have multiple subprojects that you want to publish to a
             accessToken = providers.environmentVariable("HANGAR_TOKEN")
             id = "ExampleProject"
             projectType = PAPER
+            channelType = "Release"
             platformVersions.add("26.1.2")
 
             // Allow the version to be initially created without any files.
@@ -94,6 +95,7 @@ This is useful where you have multiple subprojects that you want to publish to a
             accessToken.set(providers.environmentVariable("HANGAR_TOKEN"))
             id.set("ExampleProject")
             projectType.set(PAPER)
+            channelType.set("Release")
             platformVersions.add("26.1.2")
 
             // Allow the version to be initially created without any files.
@@ -141,6 +143,7 @@ This is useful where you have multiple subprojects that you want to publish to a
             accessToken = providers.environmentVariable("HANGAR_TOKEN")
             id = "ExampleProject"
             projectType = PAPER
+            channelType = "Release"
             platformVersions.addAll("26.1", "26.1.1", "26.1.2)
 
             // Override the Hangar API endpoint.
@@ -161,6 +164,7 @@ This is useful where you have multiple subprojects that you want to publish to a
             accessToken.set(providers.environmentVariable("HANGAR_TOKEN"))
             id.set("ExampleProject")
             projectType.set(PAPER)
+            channelType.set("Release")
             platformVersions.addAll("26.1", "26.1.1", "26.1.2)
 
             // Override the Hangar API endpoint.
