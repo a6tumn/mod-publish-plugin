@@ -15,11 +15,11 @@ interface HangarDependencyContainer {
     val dependencies: ListProperty<HangarDependency>
 
     fun requires(action: Action<HangarDependency>) {
-        addInternal(HangarDependency.DependencyType.REQUIRED, action)
+        addInternal(true, action)
     }
 
     fun optional(action: Action<HangarDependency>) {
-        addInternal(HangarDependency.DependencyType.OPTIONAL, action)
+        addInternal(false, action)
     }
 
     fun fromDependencies(other: HangarDependencyContainer) {
@@ -31,10 +31,10 @@ interface HangarDependencyContainer {
     val objectFactory: ObjectFactory
 
     @Internal
-    fun addInternal(type: HangarDependency.DependencyType, action: Action<HangarDependency>) {
+    fun addInternal(required: Boolean, action: Action<HangarDependency>) {
         val dep = objectFactory.newInstance(HangarDependency::class.java)
-        dep.type.set(type)
-        dep.type.finalizeValue()
+        dep.required.set(required)
+        dep.required.finalizeValue()
         action.execute(dep)
         dep.validate()
         dependencies.add(dep)

@@ -5,7 +5,6 @@ import me.modmuss50.mpp.networking.HttpApi.get
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
-import me.modmuss50.mpp.platforms.hangar.dependency.HangarDependency
 import java.io.File
 import java.net.URLEncoder
 
@@ -38,7 +37,7 @@ class HangarApi(
     @Serializable
     data class PluginDependency(
         val name: String,
-        val type: HangarDependency.DependencyType,
+        val required: Boolean,
         val externalUrl: String? = null,
     )
 

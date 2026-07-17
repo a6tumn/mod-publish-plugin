@@ -58,7 +58,7 @@ abstract class Hangar @Inject constructor(
                     pluginDependencies = dependencies.get().map {
                         HangarApi.PluginDependency(
                             name = it.name.get(),
-                            type = it.type.get(),
+                            required = it.required.get(),
                             externalUrl = it.url.orNull ?: "$apiEndpoint/projects/${api.encodeSlug(id.get())}/",
                         )
                     },

@@ -10,12 +10,7 @@ interface HangarDependency {
 
     val url: Property<String>
 
-    val type: Property<DependencyType>
-
-    enum class DependencyType {
-        REQUIRED,
-        OPTIONAL,
-    }
+    val required: Property<Boolean>
 
     @ApiStatus.Internal
     fun validate()
