@@ -1,6 +1,6 @@
 Hangar Platform TODOs
 =====================
 
-- Documentation
-- Tests
+- Allow empty files for parented releases
+- More tests
 - ...
