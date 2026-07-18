@@ -5,10 +5,12 @@ import me.modmuss50.mpp.platforms.hangar.dependency.HangarDependencyContainer
 import me.modmuss50.mpp.platforms.hangar.file.HangarFileContainer
 import org.gradle.api.Incubating
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskProvider
 
@@ -17,6 +19,9 @@ import org.gradle.api.tasks.TaskProvider
 */
 @Incubating
 interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
+    @get:InputFile
+    @get:Optional
+    val file: RegularFileProperty
 
     @get:Input
     @get:Optional
@@ -51,6 +56,7 @@ interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
     fun from(other: HangarOptions) {
         fromFiles(other)
         fromDependencies(other)
+        file.convention(other.file)
         apiEndpoint.convention(other.apiEndpoint)
         allowEmptyFiles.convention(other.allowEmptyFiles)
         accessToken.convention(other.accessToken)
