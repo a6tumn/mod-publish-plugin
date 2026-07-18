@@ -3,9 +3,10 @@ package me.modmuss50.mpp.platforms.hangar.dependency
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.jetbrains.annotations.ApiStatus
 import javax.inject.Inject
 
@@ -13,24 +14,25 @@ import javax.inject.Inject
 interface HangarDependencyContainer {
 
     @get:Input
-    val dependencies: ListProperty<HangarDependency>
+    @get:Optional
+    val pluginDependencies: MapProperty<String, List<HangarDependency>>
 
     fun requires(
-        platform: String,
+        name: String,
         action: Action<HangarDependency>,
     ) {
-        addInternal(platform, true, action)
+        addInternal(name, true, action)
     }
 
     fun optional(
-        platform: String,
+        name: String,
         action: Action<HangarDependency>,
     ) {
-        addInternal(platform, false, action)
+        addInternal(name, false, action)
     }
 
     fun fromDependencies(other: HangarDependencyContainer) {
-        dependencies.convention(other.dependencies)
+        pluginDependencies.convention(other.pluginDependencies)
     }
 
     @get:ApiStatus.Internal
@@ -39,14 +41,14 @@ interface HangarDependencyContainer {
 
     @Internal
     fun addInternal(
-        platform: String,
+        name: String,
         required: Boolean,
         action: Action<HangarDependency>,
     ) {
         val dep = objectFactory.newInstance(HangarDependency::class.java)
 
-        dep.platform.set(platform)
-        dep.platform.finalizeValue()
+        dep.name.set(name)
+        dep.name.finalizeValue()
 
         dep.required.set(required)
         dep.required.finalizeValue()
@@ -54,6 +56,14 @@ interface HangarDependencyContainer {
         action.execute(dep)
 
         dep.validate()
-        dependencies.add(dep)
+
+        pluginDependencies.put(
+            name,
+            pluginDependencies
+                .getting(name)
+                .map { dependencies ->
+                    dependencies + dep
+                },
+        )
     }
 }

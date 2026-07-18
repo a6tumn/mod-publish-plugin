@@ -1,13 +1,11 @@
 package me.modmuss50.mpp.platforms.hangar
 
-import me.modmuss50.mpp.PlatformOptions
-import me.modmuss50.mpp.PlatformOptionsInternal
 import me.modmuss50.mpp.PublishModTask
-import me.modmuss50.mpp.PublishOptions
 import me.modmuss50.mpp.platforms.hangar.dependency.HangarDependencyContainer
+import me.modmuss50.mpp.platforms.hangar.file.HangarFileContainer
 import org.gradle.api.Incubating
 import org.gradle.api.Task
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -17,65 +15,53 @@ import org.gradle.api.tasks.TaskProvider
 /*
 * https://github.com/HangarMC/hangar-publish-plugin/blob/master/plugin/src/main/kotlin/io/papermc/hangarpublishplugin/model/HangarPublication.kt
 */
-
 @Incubating
-interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions>, HangarDependencyContainer {
+interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
 
-    /**
-     * The API URL, defaults to https://hangar.papermc.io/api/v1/.
-     */
     @get:Input
     @get:Optional
     val apiEndpoint: Property<String>
 
-    /**
-     * The id of the Hangar project this publication is for.
-     */
     @get:Input
-    val id: Property<String>
+    @get:Optional
+    val allowEmptyFiles: Property<Boolean>
 
-    /**
-     * The type of plugin for this publication, i.e. "Paper", "Velocity", or "Waterfall".
-     */
     @get:Input
-    val projectType: Property<HangarPlatformType>
+    val accessToken: Property<String>
 
-    /**
-     * The release channel for this publication, i.e. "Release".
-     */
     @get:Input
-    val channelType: Property<String>
+    val channel: Property<String>
 
-    /**
-     * List of supported platform versions, i.e. `addAll("26.1", "26.1.1")`.
-     */
     @get:Input
-    val platformVersions: ListProperty<String>
+    @get:Optional
+    val description: Property<String>
 
-    override fun setInternalDefaults() {
+    @get:Input
+    @get:Optional
+    val platformDependencies: MapProperty<String, List<String>>
+
+    @get:Input
+    val version: Property<String>
+
+    fun setInternalDefaults() {
         apiEndpoint.convention("https://hangar.papermc.io/api/v1/")
+        allowEmptyFiles.convention(true)
     }
 
     fun from(other: HangarOptions) {
-        super.from(other)
+        fromFiles(other)
         fromDependencies(other)
         apiEndpoint.convention(other.apiEndpoint)
-        id.convention(other.id)
-        projectType.convention(other.projectType)
-        channelType.convention(other.channelType)
-        platformVersions.convention(other.platformVersions)
+        allowEmptyFiles.convention(other.allowEmptyFiles)
+        accessToken.convention(other.accessToken)
+        channel.convention(other.channel)
+        description.convention(other.description)
+        platformDependencies.convention(other.platformDependencies)
+        version.convention(other.version)
     }
 
     fun from(other: Provider<HangarOptions>) {
         from(other.get())
-    }
-
-    fun from(
-        other: Provider<HangarOptions>,
-        publishOptions: Provider<PublishOptions>,
-    ) {
-        from(other)
-        from(publishOptions.get())
     }
 
     /**
@@ -85,22 +71,11 @@ interface HangarOptions : PlatformOptions, PlatformOptionsInternal<HangarOptions
         val publishTask = task.map { it as PublishModTask }
         val options = publishTask.map { it.platform as HangarOptions }
 
+        channel.set(options.flatMap { it.channel })
+        channel.finalizeValue()
+        description.set(options.flatMap { it.description })
+        description.finalizeValue()
         version.set(options.flatMap { it.version })
         version.finalizeValue()
-        changelog.set(options.flatMap { it.changelog })
-        changelog.finalizeValue()
-        type.set(options.flatMap { it.type })
-        type.finalizeValue()
-        displayName.set(options.flatMap { it.displayName })
-        displayName.finalizeValue()
-
-        id.set(options.flatMap { it.id })
-        id.finalizeValue()
-        projectType.set(options.flatMap { it.projectType })
-        projectType.finalizeValue()
-        channelType.set(options.flatMap { it.channelType })
-        channelType.finalizeValue()
-        platformVersions.set(options.flatMap { it.platformVersions })
-        platformVersions.finalizeValue()
     }
 }
