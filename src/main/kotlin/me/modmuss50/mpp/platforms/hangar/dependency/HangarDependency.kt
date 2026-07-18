@@ -6,9 +6,13 @@ import org.jetbrains.annotations.ApiStatus
 
 @Incubating
 interface HangarDependency {
-    val name: Property<String>
+    val externalUrl: Property<String> // Not always present
 
-    val url: Property<String>
+    val name: Property<String> // Not always present
+
+    val platform: Property<String>
+
+    val projectId: Property<Int> // Not always present
 
     val required: Property<Boolean>
 

@@ -11,15 +11,22 @@ import javax.inject.Inject
 
 @Incubating
 interface HangarDependencyContainer {
+
     @get:Input
     val dependencies: ListProperty<HangarDependency>
 
-    fun requires(action: Action<HangarDependency>) {
-        addInternal(true, action)
+    fun requires(
+        platform: String,
+        action: Action<HangarDependency>,
+    ) {
+        addInternal(platform, true, action)
     }
 
-    fun optional(action: Action<HangarDependency>) {
-        addInternal(false, action)
+    fun optional(
+        platform: String,
+        action: Action<HangarDependency>,
+    ) {
+        addInternal(platform, false, action)
     }
 
     fun fromDependencies(other: HangarDependencyContainer) {
@@ -31,11 +38,21 @@ interface HangarDependencyContainer {
     val objectFactory: ObjectFactory
 
     @Internal
-    fun addInternal(required: Boolean, action: Action<HangarDependency>) {
+    fun addInternal(
+        platform: String,
+        required: Boolean,
+        action: Action<HangarDependency>,
+    ) {
         val dep = objectFactory.newInstance(HangarDependency::class.java)
+
+        dep.platform.set(platform)
+        dep.platform.finalizeValue()
+
         dep.required.set(required)
         dep.required.finalizeValue()
+
         action.execute(dep)
+
         dep.validate()
         dependencies.add(dep)
     }
