@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
 
+// Needs to be refactored to resolve comments and comply with new DTOs
 abstract class Hangar @Inject constructor(
     name: String,
 ) : Platform(name), HangarOptions {
