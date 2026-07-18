@@ -1,11 +1,13 @@
 package me.modmuss50.mpp.platforms.hangar
 
 import kotlinx.serialization.Serializable
-import me.modmuss50.mpp.networking.HttpApi.get
+import kotlinx.serialization.json.Json
 import me.modmuss50.mpp.networking.HttpApi.post
 import me.modmuss50.mpp.networking.MultipartBodyBuilder
 import me.modmuss50.mpp.networking.RequestContext
+import org.gradle.api.Incubating
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.net.URLEncoder
 
 /*
@@ -17,7 +19,10 @@ class HangarApi(
 ) {
     companion object {
         val httpContext = RequestContext(
-            json = RequestContext.Default.json,
+            json = Json {
+                ignoreUnknownKeys = true
+                explicitNulls = false
+            },
             userAgent = RequestContext.Default.userAgent,
             client = RequestContext.Default.client,
             exceptionFactory = RequestContext.Default.exceptionFactory,
@@ -26,73 +31,78 @@ class HangarApi(
 
     @Serializable
     data class VersionUpload(
-        val version: String,
-        val pluginDependencies: Map<String, List<PluginDependency>> = emptyMap(),
-        val platformDependencies: Map<String, List<String>>,
-        val description: String? = null,
-        val files: List<FileData>,
         val channel: String,
+        val description: String?,
+        val files: List<FileUpload>?,
+        val platformDependencies: Map<String, List<String>>?,
+        val pluginDependencies: Map<String, List<DependencyUpload>>?,
+        val version: String,
     )
 
     @Serializable
-    data class PluginDependency(
-        val name: String,
+    data class FileUpload(
+        val externalUrl: String?,
+        val platforms: List<HangarPlatformType>,
+    )
+
+    @Serializable
+    data class DependencyUpload(
+        val externalUrl: String?,
+        val name: String?,
+        val platform: HangarPlatformType,
+        val projectId: Int?,
         val required: Boolean,
-        val externalUrl: String? = null,
     )
 
     @Serializable
-    data class FileData(
-        val platforms: List<String>,
-        val externalUrl: String? = null,
-    )
-
-    @Serializable
-    data class VersionResponse(
+    data class VersionUploadResponse(
         val url: String,
     )
 
+    @Incubating
     @Serializable
-    data class PlatformVersionResponse(
-        val version: String,
-        val subVersions: List<String>,
-    )
+    enum class HangarPlatformType {
+        PAPER,
+        WATERFALL,
+        VELOCITY,
+        ;
+
+        companion object {
+            @JvmStatic
+            fun of(value: String): HangarPlatformType {
+                val upper = value.uppercase()
+                try {
+                    return valueOf(upper)
+                } catch (_: IllegalArgumentException) {
+                    throw IllegalArgumentException("Invalid platform type: $upper. Must be one of: PAPER, WATERFALL, VELOCITY")
+                }
+            }
+        }
+    }
 
     private val headers: Map<String, String>
         get() = mapOf("Authorization" to "Bearer $apiKey")
 
     fun publishVersion(
         projectSlug: String,
-        version: String,
-        channel: String,
-        changelog: String,
-        platform: HangarPlatformType,
-        platformVersions: List<String>,
-        file: File,
-        pluginDependencies: List<PluginDependency> = emptyList(),
-    ): VersionResponse {
+        upload: VersionUpload,
+        files: List<File> = emptyList(),
+    ): VersionUploadResponse {
         val url = "$apiEndpoint/projects/${encodeSlug(projectSlug)}/upload"
 
-        val upload = VersionUpload(
-            version = version,
-            channel = channel,
-            description = changelog,
-            platformDependencies = mapOf(
-                platform.name to platformVersions,
-            ),
-            pluginDependencies = mapOf(
-                platform.name to pluginDependencies,
-            ),
-            files = listOf(
-                FileData(
-                    platforms = listOf(platform.name),
-                ),
-            ),
-        )
-
         val builder = MultipartBodyBuilder()
-            .addFormDataPart("versionUpload", httpContext.json.encodeToString(upload))
-            .addFormDataPart("files", file.name, file)
+            .addFormDataPart(
+                "versionUpload",
+                httpContext.json.encodeToString(upload),
+            )
+
+        files.forEach { file ->
+            builder.addFormDataPart(
+                "files",
+                file.name,
+                file,
+            )
+        }
 
         return httpContext.post(
             url = url,
@@ -100,12 +110,6 @@ class HangarApi(
             headers = headers + ("Content-Type" to builder.getContentType()),
         )
     }
-
-    fun getPlatformVersions(platform: HangarPlatformType): List<PlatformVersionResponse> =
-        httpContext.get(
-            url = "$apiEndpoint/platforms/${platform.name}/versions",
-            headers = headers,
-        )
 
     fun encodeSlug(slug: String): String =
         slug.split("/")
