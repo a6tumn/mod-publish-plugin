@@ -31,8 +31,15 @@ interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
     @get:Optional
     val allowEmptyFiles: Property<Boolean>
 
+    @get:Optional
+    @get:Input
+    val announcementTitle: Property<String>
+
     @get:Input
     val accessToken: Property<String>
+
+    @get:Input
+    val id: Property<String>
 
     @get:Input
     val channel: Property<String>
@@ -59,7 +66,9 @@ interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
         file.convention(other.file)
         apiEndpoint.convention(other.apiEndpoint)
         allowEmptyFiles.convention(other.allowEmptyFiles)
+        announcementTitle.convention(other.announcementTitle)
         accessToken.convention(other.accessToken)
+        id.convention(other.id)
         channel.convention(other.channel)
         description.convention(other.description)
         platformDependencies.convention(other.platformDependencies)
@@ -77,6 +86,8 @@ interface HangarOptions : HangarFileContainer, HangarDependencyContainer {
         val publishTask = task.map { it as PublishModTask }
         val options = publishTask.map { it.platform as HangarOptions }
 
+        id.set(options.flatMap { it.id })
+        id.finalizeValue()
         channel.set(options.flatMap { it.channel })
         channel.finalizeValue()
         description.set(options.flatMap { it.description })

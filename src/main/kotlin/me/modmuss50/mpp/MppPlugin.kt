@@ -29,9 +29,6 @@ class MppPlugin : Plugin<Project> {
         extension.platforms.registerFactory(Modrinth::class.java) {
             project.objects.newInstance(Modrinth::class.java, it)
         }
-        extension.platforms.registerFactory(Hangar::class.java) {
-            project.objects.newInstance(Hangar::class.java, it)
-        }
         extension.platforms.registerFactory(Github::class.java) {
             project.objects.newInstance(Github::class.java, it)
         }
@@ -43,6 +40,9 @@ class MppPlugin : Plugin<Project> {
         }
         extension.platforms.registerFactory(Codeberg::class.java) {
             project.objects.newInstance(Codeberg::class.java, it)
+        }
+        extension.platforms.registerFactory(Hangar::class.java) {
+            project.objects.newInstance(Hangar::class.java, it)
         }
 
         val publishModsTask =

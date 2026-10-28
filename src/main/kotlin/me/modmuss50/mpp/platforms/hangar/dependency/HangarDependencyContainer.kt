@@ -49,21 +49,18 @@ interface HangarDependencyContainer {
 
         dep.name.set(name)
         dep.name.finalizeValue()
-
         dep.required.set(required)
         dep.required.finalizeValue()
 
         action.execute(dep)
-
         dep.validate()
 
+        val platform = dep.platform.get()
         pluginDependencies.put(
-            name,
-            pluginDependencies
-                .getting(name)
-                .map { dependencies ->
-                    dependencies + dep
-                },
+            platform,
+            pluginDependencies.getting(platform)
+                .orElse(emptyList())
+                .map { it + dep },
         )
     }
 }

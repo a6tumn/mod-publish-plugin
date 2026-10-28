@@ -10,7 +10,6 @@ import org.gradle.api.logging.Logger
 import javax.inject.Inject
 import kotlin.random.Random
 
-// Needs to be refactored to resolve comments and comply with new DTOs
 abstract class Hangar @Inject constructor(
     name: String,
 ) : Platform(name), HangarOptions {
@@ -27,7 +26,7 @@ abstract class Hangar @Inject constructor(
         return HangarPublishResult(
             projectSlug = projectSlug,
             version = version,
-            channel = channelType.get(),
+            channel = channel.get(),
             url = "https://hangar.papermc.io/$projectSlug/versions/$version",
             title = announcementTitle.getOrElse("Download from Hangar"),
         )
@@ -35,40 +34,86 @@ abstract class Hangar @Inject constructor(
 
     override fun printDryRunInfo(logger: Logger) {}
 
-    interface UploadParams :
-        PublishWorkParameters,
-        HangarOptions
+    interface UploadParams : PublishWorkParameters, HangarOptions
 
     abstract class UploadWorkAction : PublishWorkAction<UploadParams> {
         override fun publish(): PublishResult {
             with(parameters) {
                 val api = HangarApi(
                     apiKey = accessToken.get(),
-                    apiEndpoint = apiEndpoint.orNull
-                        ?: "https://hangar.papermc.io/api/v1/",
+                    apiEndpoint = apiEndpoint.get(),
                 )
 
-                val response = api.publishVersion(
-                    projectSlug = id.get(),
-                    version = version.get(),
-                    channel = channelType.get(),
-                    changelog = changelog.get(),
-                    platform = projectType.get(),
-                    platformVersions = platformVersions.get(),
-                    file = file.get().asFile,
-                    pluginDependencies = dependencies.get().map {
-                        HangarApi.PluginDependency(
-                            name = it.name.get(),
-                            required = it.required.get(),
-                            externalUrl = it.url.orNull ?: "$apiEndpoint/projects/${api.encodeSlug(id.get())}/",
+                val mainFile = file.orNull?.asFile
+                val declared = files.getOrElse(emptyList())
+
+                val externalEntries = declared
+                    .filter { it.externalUrl.isPresent }
+                    .map {
+                        HangarApi.FileUpload(
+                            externalUrl = it.externalUrl.get(),
+                            platforms = it.platforms.get(),
                         )
-                    },
+                    }
+
+                // Merge platforms declared for a file
+                val declaredPlatforms = declared
+                    .filterNot { it.externalUrl.isPresent }
+                    .flatMap { it.platforms.get() }
+                    .distinct()
+
+                check(mainFile != null || declaredPlatforms.isEmpty()) {
+                    "file {} was configured but no file was set"
+                }
+
+                // Fall back to the platforms named in platformDependencies
+                val mainPlatforms = declaredPlatforms.ifEmpty {
+                    platformDependencies.getOrElse(emptyMap()).keys
+                        .map { HangarApi.HangarPlatformType.of(it) }
+                }
+
+                check(mainFile == null || mainPlatforms.isNotEmpty()) {
+                    "The file has no platforms. Add a file {} block or set platformDependencies"
+                }
+
+                val entries = externalEntries + listOfNotNull(
+                    mainFile?.let { HangarApi.FileUpload(externalUrl = null, platforms = mainPlatforms) },
                 )
+
+                check(entries.isNotEmpty() || allowEmptyFiles.get()) {
+                    "No files were provided and allowEmptyFiles is false"
+                }
+
+                val pluginDeps = pluginDependencies.getOrElse(emptyMap())
+                    .values
+                    .flatten()
+                    .map {
+                        HangarApi.DependencyUpload(
+                            externalUrl = it.externalUrl.orNull,
+                            name = it.name.orNull,
+                            platform = HangarApi.HangarPlatformType.of(it.platform.get()),
+                            projectId = it.projectId.orNull,
+                            required = it.required.get(),
+                        )
+                    }
+                    .groupBy { it.platform.name }
+
+                val upload = HangarApi.VersionUpload(
+                    channel = channel.get(),
+                    description = description.orNull,
+                    files = entries.ifEmpty { null },
+                    platformDependencies = platformDependencies.orNull,
+                    pluginDependencies = pluginDeps.ifEmpty { null },
+                    version = version.get(),
+                )
+
+                val projectSlug = id.get()
+                val response = api.publishVersion(projectSlug, upload, listOfNotNull(mainFile))
 
                 return HangarPublishResult(
-                    projectSlug = id.get(),
+                    projectSlug = projectSlug,
                     version = version.get(),
-                    channel = channelType.get(),
+                    channel = channel.get(),
                     url = response.url,
                     title = announcementTitle.getOrElse("Download from Hangar"),
                 )

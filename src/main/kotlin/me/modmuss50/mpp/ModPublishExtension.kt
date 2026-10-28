@@ -12,6 +12,9 @@ import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatiblePlatform
 import me.modmuss50.mpp.platforms.github.Github
 import me.modmuss50.mpp.platforms.github.GithubOptions
 import me.modmuss50.mpp.platforms.gitlab.Gitlab
+import me.modmuss50.mpp.platforms.hangar.Hangar
+import me.modmuss50.mpp.platforms.hangar.HangarApi
+import me.modmuss50.mpp.platforms.hangar.HangarOptions
 import me.modmuss50.mpp.platforms.modrinth.Modrinth
 import me.modmuss50.mpp.platforms.modrinth.ModrinthOptions
 import org.gradle.api.Action
@@ -33,6 +36,10 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
     val BETA = ReleaseType.BETA
     val ALPHA = ReleaseType.ALPHA
     val STABLE = ReleaseType.STABLE
+
+    val PAPER = HangarApi.HangarPlatformType.PAPER
+    val VELOCITY = HangarApi.HangarPlatformType.VELOCITY
+    val WATERFALL = HangarApi.HangarPlatformType.WATERFALL
 
     abstract val dryRun: Property<Boolean>
     val platforms: ExtensiblePolymorphicDomainObjectContainer<Platform> = project.objects.polymorphicDomainObjectContainer(Platform::class.java)
@@ -329,6 +336,43 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
         }
 
         return task
+    }
+
+    // Hangar
+
+    fun hangar(@DelegatesTo(value = Hangar::class) closure: Closure<*>): NamedDomainObjectProvider<Hangar> {
+        return hangar {
+            project.configure(it, closure)
+        }
+    }
+
+    fun hangar(action: Action<Hangar>): NamedDomainObjectProvider<Hangar> {
+        return hangar("hangar", action)
+    }
+
+    fun hangar(name: String, @DelegatesTo(value = Hangar::class) closure: Closure<*>): NamedDomainObjectProvider<Hangar> {
+        return hangar(name) {
+            project.configure(it, closure)
+        }
+    }
+
+    fun hangar(name: String, action: Action<Hangar>): NamedDomainObjectProvider<Hangar> {
+        return platforms.maybeRegister(name, action)
+    }
+
+    fun hangarOptions(@DelegatesTo(value = HangarOptions::class) closure: Closure<*>): Provider<HangarOptions> {
+        return hangarOptions {
+            project.configure(it, closure)
+        }
+    }
+
+    fun hangarOptions(action: Action<HangarOptions>): Provider<HangarOptions> {
+        return project.provider {
+            val options = project.objects.newInstance(HangarOptions::class.java)
+            options.setInternalDefaults()
+            action.execute(options)
+            return@provider options
+        }
     }
 
     // Misc
