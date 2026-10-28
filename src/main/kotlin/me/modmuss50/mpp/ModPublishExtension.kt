@@ -12,11 +12,7 @@ import me.modmuss50.mpp.platforms.gitea.base.GiteaCompatiblePlatform
 import me.modmuss50.mpp.platforms.github.Github
 import me.modmuss50.mpp.platforms.github.GithubOptions
 import me.modmuss50.mpp.platforms.gitlab.Gitlab
-import me.modmuss50.mpp.platforms.hangar.Hangar
-import me.modmuss50.mpp.platforms.hangar.HangarOptions
-import me.modmuss50.mpp.platforms.hangar.HangarPlatformType
 import me.modmuss50.mpp.platforms.modrinth.Modrinth
-import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import me.modmuss50.mpp.platforms.modrinth.ModrinthOptions
 import org.gradle.api.Action
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
@@ -37,20 +33,6 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
     val BETA = ReleaseType.BETA
     val ALPHA = ReleaseType.ALPHA
     val STABLE = ReleaseType.STABLE
-
-    val PAPER = HangarPlatformType.PAPER
-    val VELOCITY = HangarPlatformType.VELOCITY
-    val WATERFALL = HangarPlatformType.WATERFALL
-
-    val CLIENT_ONLY = ModrinthEnvironment.CLIENT_ONLY
-    val SERVER_ONLY = ModrinthEnvironment.SERVER_ONLY
-    val DEDICATED_SERVER_ONLY = ModrinthEnvironment.DEDICATED_SERVER_ONLY
-    val CLIENT_AND_SERVER = ModrinthEnvironment.CLIENT_AND_SERVER
-    val SERVER_ONLY_CLIENT_OPTIONAL = ModrinthEnvironment.SERVER_ONLY_CLIENT_OPTIONAL
-    val CLIENT_ONLY_SERVER_OPTIONAL = ModrinthEnvironment.CLIENT_ONLY_SERVER_OPTIONAL
-    val CLIENT_OR_SERVER_PREFERS_BOTH = ModrinthEnvironment.CLIENT_OR_SERVER_PREFERS_BOTH
-    val CLIENT_OR_SERVER = ModrinthEnvironment.CLIENT_OR_SERVER
-    val SINGLEPLAYER_ONLY = ModrinthEnvironment.SINGLEPLAYER_ONLY
 
     abstract val dryRun: Property<Boolean>
     val platforms: ExtensiblePolymorphicDomainObjectContainer<Platform> = project.objects.polymorphicDomainObjectContainer(Platform::class.java)
@@ -147,41 +129,6 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
 
     fun modrinthOptions(action: Action<ModrinthOptions>): Provider<ModrinthOptions> {
         return configureOptions(ModrinthOptions::class) {
-            it.from(this)
-            action.execute(it)
-        }
-    }
-
-    // Hangar
-
-    fun hangar(@DelegatesTo(value = Hangar::class) closure: Closure<*>): NamedDomainObjectProvider<Hangar> {
-        return hangar {
-            project.configure(it, closure)
-        }
-    }
-
-    fun hangar(action: Action<Hangar>): NamedDomainObjectProvider<Hangar> {
-        return hangar("hangar", action)
-    }
-
-    fun hangar(name: String, @DelegatesTo(value = Hangar::class) closure: Closure<*>): NamedDomainObjectProvider<Hangar> {
-        return hangar(name) {
-            project.configure(it, closure)
-        }
-    }
-
-    fun hangar(name: String, action: Action<Hangar>): NamedDomainObjectProvider<Hangar> {
-        return platforms.maybeRegister(name, action)
-    }
-
-    fun hangarOptions(@DelegatesTo(value = HangarOptions::class) closure: Closure<*>): Provider<HangarOptions> {
-        return hangarOptions {
-            project.configure(it, closure)
-        }
-    }
-
-    fun hangarOptions(action: Action<HangarOptions>): Provider<HangarOptions> {
-        return configureOptions(HangarOptions::class) {
             it.from(this)
             action.execute(it)
         }
@@ -317,7 +264,10 @@ abstract class ModPublishExtension(val project: Project) : PublishOptions {
     }
 
     fun codeberg(name: String, action: Action<Codeberg>): NamedDomainObjectProvider<Codeberg> {
-        return platforms.maybeRegister(name, action)
+        return platforms.maybeRegister(name) { it ->
+            it.hostType.set(GiteaCompatiblePlatform.CODEBERG)
+            action.execute(it)
+        }
     }
 
     fun codebergOptions(@DelegatesTo(value = Codeberg::class) closure: Closure<*>): Provider<GiteaCompatibleOptions> {
